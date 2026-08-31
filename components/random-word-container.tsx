@@ -1,0 +1,246 @@
+"use client";
+
+import TagFilterDialog from "@/components/tag-filter-dialog";
+import { Button } from "@/components/ui/button";
+import RandomWord from "@/components/random-word";
+import { useDisplayMode } from "@/hooks/use-display-mode";
+import { SearchOptions, Word, WordSummary } from "@/lib/types";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import LevelFilterDialog from "@/components/level-filter-dialog";
+import SettingsDialog from "@/components/settings-dialog";
+import { useAtom } from "jotai";
+import { selectedLevelsState, selectedTagsState } from "@/lib/jotai/random-word/state";
+import { useLocalStorage } from "@/hooks/use-local-storage";
+import { useAiExplanation } from "@/hooks/use-ai-explanation";
+import { useAiSentences } from "@/hooks/use-ai-sentences";
+import { getWordById } from "@/lib/firebase/get-word-by-id";
+
+type Props = {
+  wordSummaries: WordSummary[];
+};
+
+export default function RandomWordContainer({ wordSummaries }: Props) {
+  const { isPwa } = useDisplayMode();
+
+  const [words, setWords] = useState<Word[]>([]);
+  const [selectedTags] = useAtom(selectedTagsState);
+  const [selectedLevels] = useAtom(selectedLevelsState);
+  const [currentIndex, setCurrentIndex] = useState(-1);
+  const [wordCount, setWordCount] = useState(-1);
+  const [isFetchingWord, setIsFetchingWord] = useState(false);
+  const [isDetailHidden, setIsDetailHidden] = useState(true);
+
+  const { isLoading: isLoadingLocalStorage } = useLocalStorage();
+
+  const tagOptions = useMemo(() => {
+    const tags = new Set<string>();
+    wordSummaries.forEach((wordSummary) => wordSummary.tags.forEach((tag) => tags.add(tag)));
+    return Array.from(tags);
+  }, [wordSummaries]);
+
+  const {
+    messages: explanations,
+    status: explanationStatus,
+    setMessages: setExplanations,
+    run: generateExplanation,
+  } = useAiExplanation();
+
+  const {
+    messages: sentences,
+    status: sentenceStatus,
+    setMessages: setSentences,
+    run: generateSentences,
+  } = useAiSentences();
+
+  const onClickShowAnswer = () => {
+    setIsDetailHidden(false);
+  };
+
+  const onClickPrev = () => {
+    setIsDetailHidden(true);
+    setExplanations([]);
+    setSentences([]);
+    setCurrentIndex((prev) => (prev > 0 ? prev - 1 : prev));
+  };
+
+  const onClickNext = useCallback(async () => {
+    if (isFetchingWord) return;
+    if (currentIndex + 1 < words.length) {
+      setIsDetailHidden(true);
+      setExplanations([]);
+      setSentences([]);
+      setCurrentIndex((prev) => prev + 1);
+      return;
+    }
+
+    setIsFetchingWord(true);
+
+    const { word, count } = await getRandomWord(wordSummaries, {
+      tags: selectedTags,
+      excludeIds: words.map((word) => word.id),
+      levels: selectedLevels,
+    });
+
+    if (word) {
+      setWords((prev) => [...prev, word]);
+      setWordCount(count);
+      setIsDetailHidden(true);
+      setExplanations([]);
+      setSentences([]);
+      setCurrentIndex((prev) => prev + 1);
+    }
+
+    setIsFetchingWord(false);
+  }, [currentIndex, isFetchingWord, selectedTags, selectedLevels, words, setExplanations, setSentences]);
+
+  useEffect(() => {
+    if (words.length === 0 && !isLoadingLocalStorage) {
+      onClickNext();
+    }
+  }, [words, isLoadingLocalStorage, onClickNext]);
+
+  useEffect(() => {
+    setCurrentIndex(-1);
+    setIsDetailHidden(false);
+    setExplanations([]);
+    setSentences([]);
+    setWords([]);
+    setWordCount(-1);
+  }, [selectedTags, selectedLevels, setExplanations, setSentences]);
+
+  const isReady = words.length > 0 && currentIndex >= 0;
+
+  const filteredExplanations = explanations.filter((explanation) => explanation.role === "assistant");
+  const filteredSentences = sentences.filter((sentence) => sentence.role === "assistant");
+
+  return (
+    <div className="max-h-screen flex flex-col items-end justify-center w-full max-w-256 mx-auto pt-2 sm:px-8 min-h-dvh sm:min-h-auto">
+      <div className="flex items-center justify-evenly gap-x-2 sm:order-1 px-2">
+        {wordCount >= 0 && (
+          <div className="text-gray-500">
+            {currentIndex + 1} / {wordCount}
+          </div>
+        )}
+        <TagFilterDialog tagOptions={tagOptions} />
+        <LevelFilterDialog />
+        <SettingsDialog />
+      </div>
+      <div className="w-full grow overflow-y-scroll px-2 space-y-2 sm:order-3">
+        {isReady && <RandomWord word={words[currentIndex]} isDetailHidden={isDetailHidden} />}
+        {filteredExplanations.length > 0 && (
+          <div className="w-full bg-green-50 p-2 sm:p-4 rounded-2xl text-sm sm:text-base">
+            {filteredExplanations.map((explanation) => (
+              <div key={explanation.id} className="whitespace-pre-wrap">
+                {explanation.parts
+                  .filter((part) => part.type === "text")
+                  .map((part, index) => (
+                    <span
+                      key={index}
+                      dangerouslySetInnerHTML={{
+                        __html: part.text.replaceAll("\n", "<br />").replaceAll("**", ""),
+                      }}
+                    />
+                  ))}
+              </div>
+            ))}
+          </div>
+        )}
+        {filteredSentences.length > 0 && (
+          <div className="w-full bg-yellow-50 p-2 sm:p-4 rounded-2xl text-sm sm:text-base">
+            {filteredSentences.map((sentence) => (
+              <div key={sentence.id} className="whitespace-pre-wrap">
+                {sentence.parts
+                  .filter((part) => part.type === "text")
+                  .map((part, index) => (
+                    <span
+                      key={index}
+                      dangerouslySetInnerHTML={{
+                        __html: part.text.replaceAll("\n", "<br />").replaceAll("**", ""),
+                      }}
+                    />
+                  ))}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div
+        className={`w-full px-2 bg-white sm:w-auto flex flex-col sm:flex-row gap-2 sm:order-2 items-end sm:items-center shadow-[0px_0px_16px_6px_#EEEEEE] sm:shadow-none pt-4 sm:pt-2 ${
+          isPwa ? "pb-16" : "pb-4 sm:pb-2"
+        }`}
+      >
+        <Button variant="green" onClick={onClickShowAnswer} disabled={!isReady || !isDetailHidden}>
+          Show Answer
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => generateExplanation(words[currentIndex].names)}
+          disabled={!isReady || explanationStatus === "submitted" || explanationStatus === "streaming"}
+        >
+          Explain Word
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => generateSentences(words[currentIndex].names)}
+          disabled={!isReady || sentenceStatus === "submitted" || sentenceStatus === "streaming"}
+        >
+          Make Sentence
+        </Button>
+        <div className="flex w-full sm:w-auto gap-x-2">
+          <Button
+            onClick={onClickPrev}
+            disabled={!isReady || currentIndex === 0 || status === "submitted" || status === "streaming"}
+            className="flex-1"
+          >
+            Prev
+          </Button>
+          <Button
+            onClick={onClickNext}
+            disabled={
+              !isReady ||
+              isFetchingWord ||
+              currentIndex === wordCount - 1 ||
+              status === "submitted" ||
+              status === "streaming"
+            }
+            className="flex-1"
+          >
+            Next
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export async function getRandomWord(
+  wordSummaries: WordSummary[],
+  options: SearchOptions,
+): Promise<{ word: Word | null; count: number }> {
+  const filteredWords = wordSummaries.filter((wordSummary) => matchCondition(wordSummary, options));
+
+  const remainingWords = filteredWords.filter((word) => !(options.excludeIds ?? []).includes(word.id));
+
+  if (remainingWords.length === 0) {
+    return { word: null, count: 0 };
+  }
+
+  const randomIndex = Math.floor(Math.random() * remainingWords.length);
+  const nextWordSummary = remainingWords[randomIndex];
+
+  const word = await getWordById(nextWordSummary.id);
+
+  return { word: word, count: filteredWords.length };
+}
+
+function matchCondition(wordSummary: WordSummary, options: SearchOptions): boolean {
+  if (options.tags && options.tags.length > 0 && !wordSummary.tags.some((tag) => options.tags?.includes(tag))) {
+    return false;
+  }
+  if (options.levels && options.levels.length > 0 && !options.levels.includes(wordSummary.level.toString())) {
+    return false;
+  }
+
+  return true;
+}
