@@ -32,6 +32,7 @@ export async function getWords(): Promise<Word[]> {
           meanings: data.Meanings ?? "",
           sentences: data.Sentences ?? "",
           collocations: data.Collocations ?? "",
+          synonyms: data.Synonyms ?? "",
           pronunciations: data.Pronunciation ?? "",
           level: Number(data.Level),
           tags: tagsArray,

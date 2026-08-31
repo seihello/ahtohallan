@@ -2,14 +2,14 @@ export const dynamic = "force-dynamic";
 
 import RandomWordContainer from "@/components/random-word-container";
 import { RandomWordProvider } from "@/lib/jotai/random-word/provider";
-import { now } from "@/lib/neon/now";
-import { use } from "react";
-export default function Page() {
-  use(now());
+import { getTagOptions } from "@/lib/neon/get-tag-options";
+
+export default async function Page() {
+  const tagOptions = await getTagOptions();
 
   return (
     <RandomWordProvider>
-      <RandomWordContainer wordSummaries={[]} />
+      <RandomWordContainer tagOptions={tagOptions} />
     </RandomWordProvider>
   );
 }
