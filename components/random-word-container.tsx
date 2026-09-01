@@ -1,12 +1,11 @@
 "use client";
 
-import TagFilterDialog from "@/components/tag-filter-dialog";
+import FilterDialog from "@/components/filter-dialog";
 import { Button } from "@/components/ui/button";
 import RandomWord from "@/components/random-word";
 import { useDisplayMode } from "@/hooks/use-display-mode";
 import { Word } from "@/lib/types";
 import React, { useCallback, useEffect, useState } from "react";
-import LevelFilterDialog from "@/components/level-filter-dialog";
 import SettingsDialog from "@/components/settings-dialog";
 import { useAtom } from "jotai";
 import { selectedLevelsState, selectedTagsState } from "@/lib/jotai/random-word/state";
@@ -115,8 +114,7 @@ export default function RandomWordContainer({ tagOptions }: Props) {
             {currentIndex + 1} / {wordCount}
           </div>
         )}
-        <TagFilterDialog tagOptions={tagOptions} />
-        <LevelFilterDialog />
+        <FilterDialog tagOptions={tagOptions} />
         <SettingsDialog />
       </div>
       <div className="w-full grow overflow-y-scroll px-2 space-y-2 sm:order-3">
