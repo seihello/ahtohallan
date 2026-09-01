@@ -5,14 +5,15 @@ import { Button } from "@/components/ui/button";
 import RandomWord from "@/components/random-word";
 import RecallButtons from "@/components/recall-buttons";
 import { useDisplayMode } from "@/hooks/use-display-mode";
-import { Word } from "@/lib/types";
-import React, { useCallback, useEffect, useState } from "react";
+import { RecallStatus, Word } from "@/lib/types";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useAtom } from "jotai";
 import { selectedLevelsState, selectedTagsState } from "@/lib/jotai/random-word/state";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { useAiExplanation } from "@/hooks/use-ai-explanation";
 import { useAiSentences } from "@/hooks/use-ai-sentences";
 import { getRandomWord } from "@/lib/neon/get-random-word";
+import { recordRecall } from "@/lib/neon/record-recall";
 
 type Props = {
   tagOptions: string[];
@@ -27,6 +28,9 @@ export default function RandomWordContainer({ tagOptions }: Props) {
   const [currentIndex, setCurrentIndex] = useState(-1);
   const [wordCount, setWordCount] = useState(-1);
   const [isFetchingWord, setIsFetchingWord] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  // state はレンダー後にしか反映されないので、同一フレーム内の連打は ref で止める
+  const isRecordingRef = useRef(false);
   const [isDetailHidden, setIsDetailHidden] = useState(true);
 
   const { isLoading: isLoadingLocalStorage } = useLocalStorage();
@@ -47,6 +51,20 @@ export default function RandomWordContainer({ tagOptions }: Props) {
 
   const onClickShowAnswer = () => {
     setIsDetailHidden(false);
+  };
+
+  const onSelectRecall = async (status: RecallStatus) => {
+    const word = words[currentIndex];
+    if (!word || isRecordingRef.current) return;
+
+    isRecordingRef.current = true;
+    setIsRecording(true);
+
+    recordRecall(word.id, status);
+    isRecordingRef.current = false;
+    setIsRecording(false);
+
+    await onClickNext();
   };
 
   const onClickPrev = () => {
@@ -121,7 +139,11 @@ export default function RandomWordContainer({ tagOptions }: Props) {
           <RandomWord word={words[currentIndex]} isDetailHidden={isDetailHidden} onReveal={onClickShowAnswer} />
         )}
 
-        <RecallButtons className="mx-auto w-fit hidden sm:flex gap-2 mt-12" disabled={!isReady} />
+        <RecallButtons
+          className="mx-auto w-fit hidden sm:flex gap-2 mt-12"
+          onSelect={onSelectRecall}
+          disabled={!isReady || isRecording}
+        />
         {filteredExplanations.length > 0 && (
           <div className="w-full bg-green-50 p-2 sm:p-4 rounded-2xl text-sm sm:text-base">
             {filteredExplanations.map((explanation) => (
@@ -165,7 +187,11 @@ export default function RandomWordContainer({ tagOptions }: Props) {
           isPwa ? "pb-16" : "pb-4 sm:pb-2"
         }`}
       >
-        <RecallButtons className="w-full flex gap-2 flex-1 sm:hidden" disabled={!isReady} />
+        <RecallButtons
+          className="w-full flex gap-2 flex-1 sm:hidden"
+          onSelect={onSelectRecall}
+          disabled={!isReady || isRecording}
+        />
         {/* <Button
           variant="outline"
           onClick={() => generateExplanation(words[currentIndex].names)}

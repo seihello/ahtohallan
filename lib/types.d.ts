@@ -4,6 +4,8 @@ export type WordSummary = {
   tags: string[];
 };
 
+export type RecallStatus = "know" | "seen" | "new";
+
 export type Word = {
   id: string;
   names: string;
@@ -14,6 +16,7 @@ export type Word = {
   synonyms: string;
   level: number;
   tags: string[];
+  recallStatus: RecallStatus | null;
 };
 
 export type SearchOptions = { excludeIds?: string[]; tags?: string[]; levels?: string[] };

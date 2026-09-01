@@ -28,6 +28,7 @@ export async function getRandomWord(options: SearchOptions): Promise<{ word: Wor
       f.pronunciations,
       COALESCE(f.level, 0) AS level,
       f.tags,
+      f.recall_status AS "recallStatus",
       (SELECT count(*)::int FROM filtered) AS count
     FROM filtered f
     WHERE NOT (f.id = ANY(${excludeIds}::text[]))
