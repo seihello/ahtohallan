@@ -165,20 +165,20 @@ export default function RandomWordContainer({ tagOptions }: Props) {
         <Button variant="green" onClick={onClickShowAnswer} disabled={!isReady || !isDetailHidden}>
           Show Answer
         </Button>
-        <Button
+        {/* <Button
           variant="outline"
           onClick={() => generateExplanation(words[currentIndex].names)}
           disabled={!isReady || explanationStatus === "submitted" || explanationStatus === "streaming"}
         >
           Explain Word
-        </Button>
-        <Button
+        </Button> */}
+        {/* <Button
           variant="outline"
           onClick={() => generateSentences(words[currentIndex].names)}
           disabled={!isReady || sentenceStatus === "submitted" || sentenceStatus === "streaming"}
         >
           Make Sentence
-        </Button>
+        </Button> */}
         <div className="flex w-full sm:w-auto gap-x-2">
           <Button
             onClick={onClickPrev}
