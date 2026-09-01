@@ -107,7 +107,4 @@
   body {
     @apply bg-background text-foreground;
   }
-  .tag {
-    clip-path: polygon(8px 0%, 100% 0%, 100% 100%, 8px 100%, 0 50%);
-  }
 }
