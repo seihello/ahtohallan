@@ -3,6 +3,7 @@
 import FilterDialog from "@/components/filter-dialog";
 import { Button } from "@/components/ui/button";
 import RandomWord from "@/components/random-word";
+import RecallButtons from "@/components/recall-buttons";
 import { useDisplayMode } from "@/hooks/use-display-mode";
 import { Word } from "@/lib/types";
 import React, { useCallback, useEffect, useState } from "react";
@@ -119,6 +120,8 @@ export default function RandomWordContainer({ tagOptions }: Props) {
         {isReady && (
           <RandomWord word={words[currentIndex]} isDetailHidden={isDetailHidden} onReveal={onClickShowAnswer} />
         )}
+
+        <RecallButtons className="mx-auto w-fit hidden sm:flex gap-2 mt-12" disabled={!isReady} />
         {filteredExplanations.length > 0 && (
           <div className="w-full bg-green-50 p-2 sm:p-4 rounded-2xl text-sm sm:text-base">
             {filteredExplanations.map((explanation) => (
@@ -162,6 +165,7 @@ export default function RandomWordContainer({ tagOptions }: Props) {
           isPwa ? "pb-16" : "pb-4 sm:pb-2"
         }`}
       >
+        <RecallButtons className="w-full flex gap-2 flex-1 sm:hidden" disabled={!isReady} />
         {/* <Button
           variant="outline"
           onClick={() => generateExplanation(words[currentIndex].names)}
