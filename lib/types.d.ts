@@ -17,10 +17,3 @@ export type Word = {
 };
 
 export type SearchOptions = { excludeIds?: string[]; tags?: string[]; levels?: string[] };
-
-export type Settings = {
-  shouldShowMeanings: boolean;
-  shouldShowSentences: boolean;
-  shouldShowTags: boolean;
-  shouldShowLevel: boolean;
-};

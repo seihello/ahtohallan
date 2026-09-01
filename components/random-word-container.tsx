@@ -6,7 +6,6 @@ import RandomWord from "@/components/random-word";
 import { useDisplayMode } from "@/hooks/use-display-mode";
 import { Word } from "@/lib/types";
 import React, { useCallback, useEffect, useState } from "react";
-import SettingsDialog from "@/components/settings-dialog";
 import { useAtom } from "jotai";
 import { selectedLevelsState, selectedTagsState } from "@/lib/jotai/random-word/state";
 import { useLocalStorage } from "@/hooks/use-local-storage";
@@ -107,7 +106,7 @@ export default function RandomWordContainer({ tagOptions }: Props) {
   const filteredSentences = sentences.filter((sentence) => sentence.role === "assistant");
 
   return (
-    <div className="max-h-screen flex flex-col items-end justify-center w-full max-w-256 mx-auto pt-2 sm:px-8 min-h-dvh sm:min-h-auto">
+    <div className="h-screen flex flex-col items-end justify-center w-full max-w-256 mx-auto py-2 sm:px-8">
       <div className="flex items-center justify-evenly gap-x-2 sm:order-1 px-2">
         {wordCount >= 0 && (
           <div className="text-gray-500">
@@ -115,10 +114,11 @@ export default function RandomWordContainer({ tagOptions }: Props) {
           </div>
         )}
         <FilterDialog tagOptions={tagOptions} />
-        <SettingsDialog />
       </div>
-      <div className="w-full grow overflow-y-scroll px-2 space-y-2 sm:order-3">
-        {isReady && <RandomWord word={words[currentIndex]} isDetailHidden={isDetailHidden} />}
+      <div className="w-full grow overflow-y-scroll px-6 pb-6 space-y-2 sm:order-3">
+        {isReady && (
+          <RandomWord word={words[currentIndex]} isDetailHidden={isDetailHidden} onReveal={onClickShowAnswer} />
+        )}
         {filteredExplanations.length > 0 && (
           <div className="w-full bg-green-50 p-2 sm:p-4 rounded-2xl text-sm sm:text-base">
             {filteredExplanations.map((explanation) => (
@@ -162,9 +162,6 @@ export default function RandomWordContainer({ tagOptions }: Props) {
           isPwa ? "pb-16" : "pb-4 sm:pb-2"
         }`}
       >
-        <Button variant="green" onClick={onClickShowAnswer} disabled={!isReady || !isDetailHidden}>
-          Show Answer
-        </Button>
         {/* <Button
           variant="outline"
           onClick={() => generateExplanation(words[currentIndex].names)}
