@@ -55,7 +55,7 @@ function TagFilterSection({
 }) {
   return (
     <div className="space-y-4">
-      <h3 className="font-bold text-xl">Tags</h3>
+      <h3 className="font-bold text-xl text-center">Tags</h3>
       <div className="flex gap-y-4 flex-wrap">
         {options.map((option) => {
           const id = `tag-${option}`;
@@ -93,7 +93,7 @@ function LevelFilterSection({
 }) {
   return (
     <div className="space-y-4">
-      <h3 className="font-bold text-xl">Levels</h3>
+      <h3 className="font-bold text-xl text-center">Levels</h3>
       <div className="px-1 space-y-3 max-w-[300px] mx-auto">
         <Slider
           value={range}
