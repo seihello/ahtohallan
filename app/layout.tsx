@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Vocab Spot",
+  title: "Ahtohallan",
   description: "Learn English Vocab",
 };
 
