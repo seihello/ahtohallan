@@ -22,10 +22,10 @@ export default function RandomWord({ word, isDetailHidden, onReveal }: Props) {
           <span className="h-px w-6 bg-gradient-to-r from-transparent to-ice-200/60" />
           <span className="text-[10px] tracking-[0.4em] text-ice-200/60 uppercase">Ahtohallan remembers</span>
         </div>
-        <h2 className="text-frozen font-display text-3xl leading-tight font-bold sm:text-5xl">{word.names}</h2>
+        <h2 className="text-frozen font-display text-2xl leading-tight font-bold sm:text-3xl">{word.names}</h2>
       </header>
 
-      <div className="relative mt-6">
+      <div className="relative mt-3">
         <div
           className={`space-y-4 ${
             isDetailHidden ? "cursor-pointer blur-[6px] select-none" : "transition-[filter] duration-300"
@@ -72,7 +72,7 @@ export default function RandomWord({ word, isDetailHidden, onReveal }: Props) {
 
         {isDetailHidden && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <span className="animate-shimmer flex items-center gap-2 rounded-full border border-ice-200/30 bg-aurora-950/50 px-4 py-2 text-[11px] tracking-[0.3em] text-ice-100 uppercase backdrop-blur-sm">
+            <span className="opacity-80 flex items-center gap-2 rounded-full border border-ice-200/30 bg-aurora-950/50 px-3 py-2 text-[10px] tracking-[0.2em] text-ice-100 uppercase backdrop-blur-sm">
               <IconSnowflake size={14} stroke={1.5} />
               Tap to reveal
             </span>
