@@ -2,7 +2,7 @@ import nextPWA from "next-pwa";
 
 const withPWA = nextPWA({
   dest: "public",
-  register: true,
+  register: false,
   skipWaiting: true,
   disable: process.env.NODE_ENV === "development",
 });

@@ -1,7 +1,13 @@
 {
-  "theme_color": "#120B1D",
-  "background_color": "#120B1D",
+  "theme_color": "#150E22",
+  "background_color": "#150E22",
   "icons": [
+    {
+      "purpose": "any",
+      "sizes": "192x192",
+      "src": "icon192.png",
+      "type": "image/png"
+    },
     {
       "purpose": "maskable",
       "sizes": "512x512",
@@ -19,6 +25,8 @@
   "display": "standalone",
   "dir": "auto",
   "lang": "en-US",
-  "name": "Vocab Spot",
-  "start_url": "https://vocab-spot.seisuke.info"
+  "name": "Ahtohallan",
+  "start_url": "/",
+  "short_name": "Ahtohallan",
+  "scope": "/"
 }

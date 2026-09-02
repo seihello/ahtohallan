@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Cinzel, Geist, Geist_Mono } from "next/font/google";
+import ServiceWorkerRegistrar from "@/components/service-worker-registrar";
 import SiteBackdrop from "@/components/site-backdrop";
 import "./globals.css";
 
@@ -25,7 +26,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#120B1D",
+  themeColor: "#150E22",
 };
 
 export default function RootLayout({
@@ -37,12 +38,13 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <link rel="apple-touch-icon" href="/icon.png"></link>
+        <link rel="apple-touch-icon" href="/icon192.png" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${cinzel.variable} antialiased sm:min-h-screen`}
       >
         <SiteBackdrop />
+        <ServiceWorkerRegistrar />
         {children}
       </body>
     </html>
