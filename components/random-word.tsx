@@ -11,12 +11,6 @@ type Props = {
 export default function RandomWord({ word, isDetailHidden, onReveal }: Props) {
   return (
     <article className="glass ice-edge relative w-full overflow-hidden rounded-3xl p-5 whitespace-pre-line sm:p-8">
-      <IconSnowflake
-        aria-hidden
-        className="animate-crystal pointer-events-none absolute -top-16 -right-16 size-56 text-ice-200/8 sm:size-72"
-        stroke={0.6}
-      />
-
       <header className="relative space-y-2">
         <div className="flex items-center gap-3">
           <span className="h-px w-6 bg-gradient-to-r from-transparent to-ice-200/60" />
@@ -72,7 +66,7 @@ export default function RandomWord({ word, isDetailHidden, onReveal }: Props) {
 
         {isDetailHidden && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <span className="opacity-80 flex items-center gap-2 rounded-full border border-ice-200/30 bg-aurora-950/50 px-3 py-2 text-[10px] tracking-[0.2em] text-ice-100 uppercase backdrop-blur-sm">
+            <span className="opacity-80 flex items-center gap-2 rounded-full border border-ice-200/30 bg-glacier-950/60 px-3 py-2 text-[10px] tracking-[0.2em] text-ice-100 uppercase backdrop-blur-sm">
               <IconSnowflake size={14} stroke={1.5} />
               Tap to reveal
             </span>

@@ -10,7 +10,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "border border-gold-400/70 bg-gradient-to-b from-gold-300 to-gold-500 text-aurora-950 shadow-[0_8px_24px_-10px_rgba(238,165,1,0.9)] hover:from-gold-200 hover:to-gold-400 hover:shadow-[0_10px_30px_-8px_rgba(247,194,44,0.85)]",
+          "border border-gold-400/70 bg-gradient-to-b from-gold-300 to-gold-500 text-timber-950 shadow-[0_8px_24px_-10px_rgba(238,165,1,0.9)] hover:from-gold-200 hover:to-gold-400 hover:shadow-[0_10px_30px_-8px_rgba(247,194,44,0.85)]",
         destructive: "border border-destructive/60 bg-destructive/20 text-red-200 hover:bg-destructive/30",
         outline:
           "border border-frost-200/20 bg-frost-100/5 text-frost-100 shadow-[inset_0_1px_0_rgba(236,242,249,0.18)] hover:border-ice-200/45 hover:bg-frost-100/12 hover:text-ice-100",

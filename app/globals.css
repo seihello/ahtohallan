@@ -52,6 +52,18 @@
   --color-frost-900: #232939;
   --color-frost-950: #151925;
 
+  --color-timber-50: #FAF3EC;
+  --color-timber-100: #F1E3D4;
+  --color-timber-200: #E0C6A9;
+  --color-timber-300: #C9A47B;
+  --color-timber-400: #A97F52;
+  --color-timber-500: #8A6238;
+  --color-timber-600: #6E4C2B;
+  --color-timber-700: #563B22;
+  --color-timber-800: #402C1B;
+  --color-timber-900: #2C1E13;
+  --color-timber-950: #1A120B;
+
   --color-ice-50: #EFFBFE;
   --color-ice-100: #D6F4FC;
   --color-ice-200: #AEE9F8;
@@ -182,17 +194,17 @@
   --color-amber-950: var(--color-gold-950);
 
   /* orange → gold */
-  --color-orange-50: var(--color-gold-50);
-  --color-orange-100: var(--color-gold-100);
-  --color-orange-200: var(--color-gold-200);
-  --color-orange-300: var(--color-gold-300);
-  --color-orange-400: var(--color-gold-400);
-  --color-orange-500: var(--color-gold-500);
-  --color-orange-600: var(--color-gold-600);
-  --color-orange-700: var(--color-gold-700);
-  --color-orange-800: var(--color-gold-800);
-  --color-orange-900: var(--color-gold-900);
-  --color-orange-950: var(--color-gold-950);
+  --color-orange-50: var(--color-timber-50);
+  --color-orange-100: var(--color-timber-100);
+  --color-orange-200: var(--color-timber-200);
+  --color-orange-300: var(--color-timber-300);
+  --color-orange-400: var(--color-timber-400);
+  --color-orange-500: var(--color-timber-500);
+  --color-orange-600: var(--color-timber-600);
+  --color-orange-700: var(--color-timber-700);
+  --color-orange-800: var(--color-timber-800);
+  --color-orange-900: var(--color-timber-900);
+  --color-orange-950: var(--color-timber-950);
 
   /* gray → frost */
   --color-gray-50: var(--color-frost-50);
@@ -247,17 +259,17 @@
   --color-neutral-950: var(--color-frost-950);
 
   /* stone → frost */
-  --color-stone-50: var(--color-frost-50);
-  --color-stone-100: var(--color-frost-100);
-  --color-stone-200: var(--color-frost-200);
-  --color-stone-300: var(--color-frost-300);
-  --color-stone-400: var(--color-frost-400);
-  --color-stone-500: var(--color-frost-500);
-  --color-stone-600: var(--color-frost-600);
-  --color-stone-700: var(--color-frost-700);
-  --color-stone-800: var(--color-frost-800);
-  --color-stone-900: var(--color-frost-900);
-  --color-stone-950: var(--color-frost-950);
+  --color-stone-50: var(--color-timber-50);
+  --color-stone-100: var(--color-timber-100);
+  --color-stone-200: var(--color-timber-200);
+  --color-stone-300: var(--color-timber-300);
+  --color-stone-400: var(--color-timber-400);
+  --color-stone-500: var(--color-timber-500);
+  --color-stone-600: var(--color-timber-600);
+  --color-stone-700: var(--color-timber-700);
+  --color-stone-800: var(--color-timber-800);
+  --color-stone-900: var(--color-timber-900);
+  --color-stone-950: var(--color-timber-950);
 
   /* blue → ice */
   --color-blue-50: var(--color-ice-50);
@@ -323,16 +335,16 @@
 :root {
   --radius: 0.875rem;
 
-  --background: #120B1D;
+  --background: #150E22;
   --foreground: #ECF2F9;
 
-  --card: rgba(45, 32, 66, 0.55);
+  --card: rgba(40, 52, 42, 0.55);
   --card-foreground: #ECF2F9;
-  --popover: #1B1229;
+  --popover: #16211A;
   --popover-foreground: #ECF2F9;
 
   --primary: #EEA501;
-  --primary-foreground: #1A1124;
+  --primary-foreground: #1A120B;
   --primary-100: #E9E2F1;
   --primary-300: #B4A2CB;
   --primary-500: #715C8E;
@@ -347,30 +359,30 @@
   --secondary-700: #EEA501;
   --secondary-900: #9E6B00;
 
-  --muted: rgba(180, 162, 203, 0.12);
+  --muted: rgba(163, 193, 166, 0.14);
   --muted-foreground: #B8CADF;
-  --accent: rgba(123, 217, 241, 0.14);
-  --accent-foreground: #D6F4FC;
+  --accent: rgba(201, 164, 123, 0.16);
+  --accent-foreground: #F1E3D4;
 
   --destructive: #E4576B;
 
-  --border: rgba(180, 162, 203, 0.22);
-  --input: rgba(180, 162, 203, 0.28);
+  --border: rgba(199, 219, 201, 0.22);
+  --input: rgba(199, 219, 201, 0.28);
   --ring: rgba(247, 194, 44, 0.55);
 
   --chart-1: #F7C22C;
   --chart-2: #7BD9F1;
-  --chart-3: #B4A2CB;
+  --chart-3: #C9A47B;
   --chart-4: #7CA180;
   --chart-5: #EEA501;
 
-  --sidebar: #1A1124;
+  --sidebar: #16211A;
   --sidebar-foreground: #ECF2F9;
   --sidebar-primary: #EEA501;
-  --sidebar-primary-foreground: #1A1124;
-  --sidebar-accent: rgba(123, 217, 241, 0.12);
-  --sidebar-accent-foreground: #D6F4FC;
-  --sidebar-border: rgba(180, 162, 203, 0.22);
+  --sidebar-primary-foreground: #1A120B;
+  --sidebar-accent: rgba(201, 164, 123, 0.14);
+  --sidebar-accent-foreground: #F1E3D4;
+  --sidebar-border: rgba(199, 219, 201, 0.22);
   --sidebar-ring: rgba(247, 194, 44, 0.55);
 }
 
@@ -447,7 +459,7 @@
     height: 6px;
   }
   ::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, rgba(123, 217, 241, 0.5), rgba(180, 162, 203, 0.3));
+    background: linear-gradient(180deg, rgba(163, 193, 166, 0.55), rgba(201, 164, 123, 0.35));
     border-radius: 9999px;
   }
   ::-webkit-scrollbar-track {
@@ -456,8 +468,8 @@
 }
 
 @utility glass {
-  background-image: linear-gradient(155deg, rgba(236, 242, 249, 0.14) 0%, rgba(74, 54, 95, 0.35) 45%, rgba(26, 17, 36, 0.55) 100%);
-  border: 1px solid rgba(214, 244, 252, 0.16);
+  background-image: linear-gradient(155deg, rgba(236, 242, 249, 0.12) 0%, rgba(84, 107, 86, 0.4) 45%, rgba(22, 33, 26, 0.62) 100%);
+  border: 1px solid rgba(199, 219, 201, 0.18);
   box-shadow:
     0 24px 60px -30px rgba(0, 0, 0, 0.9),
     inset 0 1px 0 rgba(236, 242, 249, 0.25);

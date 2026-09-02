@@ -215,7 +215,7 @@ export default function RandomWordContainer({ tagOptions }: Props) {
       </div>
 
       <div
-        className={`flex w-full flex-col items-end gap-2 border-t border-frost-200/12 bg-aurora-950/70 px-4 pt-4 backdrop-blur-xl sm:order-2 sm:w-auto sm:flex-row sm:items-center sm:border-none sm:bg-transparent sm:px-2 sm:pt-2 sm:backdrop-blur-none ${
+        className={`flex w-full flex-col items-end gap-2 border-t border-frost-200/12 bg-glacier-950/75 px-4 pt-4 backdrop-blur-xl sm:order-2 sm:w-auto sm:flex-row sm:items-center sm:border-none sm:bg-transparent sm:px-2 sm:pt-2 sm:backdrop-blur-none ${
           isPwa ? "pb-16" : "pb-4 sm:pb-2"
         }`}
       >
