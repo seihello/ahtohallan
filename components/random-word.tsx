@@ -1,4 +1,5 @@
 import { Word } from "@/lib/types";
+import { IconSnowflake } from "@tabler/icons-react";
 import React from "react";
 
 type Props = {
@@ -9,45 +10,79 @@ type Props = {
 
 export default function RandomWord({ word, isDetailHidden, onReveal }: Props) {
   return (
-    <div className="space-y-2 whitespace-pre-line w-full">
-      <div className="font-bold text-2xl text-primary-700">{word.names}</div>
+    <article className="glass ice-edge relative w-full overflow-hidden rounded-3xl p-5 whitespace-pre-line sm:p-8">
+      {/* 氷の結晶の透かし。ごくゆっくり回る */}
+      <IconSnowflake
+        aria-hidden
+        className="animate-crystal pointer-events-none absolute -top-16 -right-16 size-56 text-ice-200/8 sm:size-72"
+        stroke={0.6}
+      />
 
-      <div
-        // ぼかしを「かける」ときはトランジションを付けない。
-        // 付けると次の単語に切り替えた瞬間、ぼけきるまでの間だけ中身が読めてしまう。
-        className={`space-y-2 ${
-          isDetailHidden ? "blur-sm cursor-pointer select-none" : "transition-[filter] duration-200"
-        }`}
-        {...(isDetailHidden
-          ? {
-              role: "button",
-              tabIndex: 0,
-              "aria-label": "Show answer",
-              onClick: onReveal,
-              onKeyDown: (event: React.KeyboardEvent) => {
-                if (event.key === "Enter" || event.key === " ") {
-                  event.preventDefault();
-                  onReveal();
-                }
-              },
-            }
-          : {})}
-      >
-        <div className="text-gray-500">{word.meanings}</div>
-        <div>{word.sentences}</div>
-        <div className="flex flex-wrap gap-2 justify-end">
-          {word.level && (
-            <div className="border border-gray-300 rounded-md px-2 py-1 text-xs flex items-center justify-center">
-              Level {word.level}
-            </div>
-          )}
-          {word.tags.map((tag, index) => (
-            <span key={index} className="rounded-full bg-primary-100 px-2.5 py-1 text-xs font-medium text-primary-700">
-              {tag}
-            </span>
-          ))}
+      <header className="relative space-y-2">
+        <div className="flex items-center gap-3">
+          <span className="h-px w-6 bg-gradient-to-r from-transparent to-ice-200/60" />
+          <span className="text-[10px] tracking-[0.4em] text-ice-200/60 uppercase">Ahtohallan remembers</span>
         </div>
+        <h2 className="text-frozen font-display text-3xl leading-tight font-bold sm:text-5xl">{word.names}</h2>
+      </header>
+
+      <div className="relative mt-6">
+        <div
+          // ぼかしを「かける」ときはトランジションを付けない。
+          // 付けると次の単語に切り替えた瞬間、ぼけきるまでの間だけ中身が読めてしまう。
+          className={`space-y-4 ${
+            isDetailHidden ? "cursor-pointer blur-[6px] select-none" : "transition-[filter] duration-300"
+          }`}
+          {...(isDetailHidden
+            ? {
+                role: "button",
+                tabIndex: 0,
+                "aria-label": "Show answer",
+                onClick: onReveal,
+                onKeyDown: (event: React.KeyboardEvent) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    onReveal();
+                  }
+                },
+              }
+            : {})}
+        >
+          <p className="text-base leading-relaxed text-frost-100 sm:text-lg">{word.meanings}</p>
+
+          {word.sentences && (
+            <p className="border-l-2 border-ice-300/40 pl-4 text-sm leading-relaxed text-frost-300 italic sm:text-base">
+              {word.sentences}
+            </p>
+          )}
+
+          <div className="flex flex-wrap items-center justify-end gap-2 pt-2">
+            {word.level > 0 && (
+              <span className="rounded-full border border-gold-400/45 bg-gold-500/12 px-3 py-1 font-mono text-[11px] tracking-widest text-gold-200">
+                LV {word.level}
+              </span>
+            )}
+            {word.tags.map((tag, index) => (
+              <span
+                key={index}
+                className="rounded-full border border-glacier-300/30 bg-glacier-600/25 px-3 py-1 text-xs font-medium text-glacier-100"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* ぼかしの上に重ねるヒント。クリックは下のぼかし面に通す */}
+        {isDetailHidden && (
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            <span className="animate-shimmer flex items-center gap-2 rounded-full border border-ice-200/30 bg-aurora-950/50 px-4 py-2 text-[11px] tracking-[0.3em] text-ice-100 uppercase backdrop-blur-sm">
+              <IconSnowflake size={14} stroke={1.5} />
+              Tap to reveal
+            </span>
+          </div>
+        )}
       </div>
-    </div>
+    </article>
   );
 }

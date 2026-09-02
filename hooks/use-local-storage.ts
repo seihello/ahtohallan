@@ -19,13 +19,18 @@ export function useLocalStorage() {
     setIsLoading(false);
   }, [setSelectedTags, setSelectedLevels]);
 
+  // 読み込みが終わるまで保存しない。
+  // マウント直後の atom は空配列なので、そのまま書くと未設定時のデフォルトを
+  // 空の保存値で上書きしてしまう（React Strict Mode の二重実行でも起きる）。
   useEffect(() => {
+    if (isLoading) return;
     setSelectedTagsToLocalStorage(selectedTags);
-  }, [selectedTags]);
+  }, [isLoading, selectedTags]);
 
   useEffect(() => {
+    if (isLoading) return;
     setSelectedLevelsToLocalStorage(selectedLevels);
-  }, [selectedLevels]);
+  }, [isLoading, selectedLevels]);
 
   return {
     isLoading,

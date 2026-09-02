@@ -4,10 +4,13 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { RecallStatus } from "@/lib/types";
 
-const RECALL_OPTIONS: { status: RecallStatus; label: string }[] = [
-  { status: "know", label: "Know it" },
-  { status: "seen", label: "Seen it" },
-  { status: "new", label: "New to me" },
+type Variant = React.ComponentProps<typeof Button>["variant"];
+
+/** 3つの記憶ステータス。森の緑 → 城の灯り → 氷、の順に「知らなさ」が上がる */
+const RECALL_OPTIONS: { status: RecallStatus; label: string; variant: Variant }[] = [
+  { status: "know", label: "Know it", variant: "glacier" },
+  { status: "seen", label: "Seen it", variant: "hearth" },
+  { status: "new", label: "New to me", variant: "ice" },
 ];
 
 type Props = {
@@ -19,11 +22,11 @@ type Props = {
 export default function RecallButtons({ className, onSelect, disabled }: Props) {
   return (
     <div className={className}>
-      {RECALL_OPTIONS.map(({ status, label }) => (
+      {RECALL_OPTIONS.map(({ status, label, variant }) => (
         <Button
           key={status}
-          variant="outline"
-          className="flex-1 w-auto sm:w-36"
+          variant={variant}
+          className="w-auto flex-1 sm:w-36"
           disabled={disabled}
           onClick={() => onSelect(status)}
         >

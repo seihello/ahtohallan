@@ -5,25 +5,35 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "w-full sm:w-auto inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  "w-full sm:w-auto inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium tracking-wide transition-all duration-200 disabled:pointer-events-none disabled:opacity-40 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-ring focus-visible:ring-[3px] aria-invalid:border-destructive backdrop-blur-sm active:scale-[0.98]",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
-        destructive:
-          "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+        /** 城の灯り。主要な導線 */
+        default:
+          "border border-gold-400/70 bg-gradient-to-b from-gold-300 to-gold-500 text-aurora-950 shadow-[0_8px_24px_-10px_rgba(238,165,1,0.9)] hover:from-gold-200 hover:to-gold-400 hover:shadow-[0_10px_30px_-8px_rgba(247,194,44,0.85)]",
+        destructive: "border border-destructive/60 bg-destructive/20 text-red-200 hover:bg-destructive/30",
+        /** 氷のガラス。既定の副次アクション */
         outline:
-          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
-        secondary: "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
-        link: "text-primary underline-offset-4 hover:underline",
-        green: "bg-teal-50 border border-teal-500 text-teal-500 shadow-xs hover:bg-white",
+          "border border-frost-200/20 bg-frost-100/5 text-frost-100 shadow-[inset_0_1px_0_rgba(236,242,249,0.18)] hover:border-ice-200/45 hover:bg-frost-100/12 hover:text-ice-100",
+        secondary:
+          "border border-glacier-300/35 bg-glacier-600/35 text-glacier-100 hover:bg-glacier-600/50 hover:border-glacier-300/55",
+        ghost: "text-frost-300 hover:bg-frost-100/10 hover:text-frost-100",
+        link: "text-gold-400 underline-offset-4 hover:underline hover:text-gold-300",
+        /** 覚えている = 森の緑 */
+        glacier:
+          "border border-glacier-300/55 bg-glacier-600/55 text-glacier-50 hover:bg-glacier-500/70 hover:border-glacier-200/70 hover:shadow-[0_8px_24px_-12px_rgba(163,193,166,0.9)]",
+        /** 見たことがある = 城の灯り（淡） */
+        hearth:
+          "border border-gold-400/55 bg-gold-500/25 text-gold-100 hover:bg-gold-500/40 hover:border-gold-300/75 hover:shadow-[0_8px_24px_-12px_rgba(247,194,44,0.9)]",
+        /** はじめて = アートハランの氷 */
+        ice: "border border-ice-300/50 bg-ice-500/28 text-ice-50 hover:bg-ice-500/45 hover:border-ice-200/75 hover:shadow-[0_8px_24px_-12px_rgba(123,217,241,0.9)]",
       },
       size: {
-        default: "h-9 px-4 py-2 has-[>svg]:px-3",
+        default: "h-10 px-4 py-2 has-[>svg]:px-3",
         sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
-        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
-        icon: "size-9",
+        lg: "h-11 rounded-xl px-6 has-[>svg]:px-4",
+        icon: "size-10",
       },
     },
     defaultVariants: {

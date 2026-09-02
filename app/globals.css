@@ -3,50 +3,393 @@
 
 @custom-variant dark (&:is(.dark *));
 
-:root {
-  --radius: 0.625rem;
+/* ==========================================================================
+   Ahtohallan — アレンデール城の夜とアートハランの氷をイメージしたテーマ
+   紫(#4A365F)を夜空、緑(#546B56)を魔法の森、黄(#EEA501 / #F7C22C)を城の灯り
+   として扱い、氷のような半透明のガラス面を重ねて構成する。
+   ========================================================================== */
 
-  --background: #FFFFFF;
-  --foreground: #0A0A0A;
-  --sidebar-ring: #A1A1A1;
-  --sidebar-border: #E5E5E5;
-  --sidebar-accent-foreground: #171717;
-  --sidebar-accent: #F5F5F5;
-  --sidebar-primary-foreground: #FAFAFA;
-  --sidebar-primary: #171717;
-  --sidebar-foreground: #0A0A0A;
-  --sidebar: #FAFAFA;
-  --chart-5: #F69E00;
-  --chart-4: #FABC00;
-  --chart-3: #104E64;
-  --chart-2: #009488;
-  --chart-1: #EC5600;
-  --ring: #A1A1A1;
-  --input: #E5E5E5;
-  --border: #E5E5E5;
-  --destructive: #E40016;
-  --accent-foreground: #171717;
-  --accent: #F5F5F5;
-  --muted-foreground: #737373;
-  --muted: #F5F5F5;
-  --secondary-foreground: #FEFDEE;
-  --secondary: #FEF61D;
-  --secondary-100: #FEFDEE;
-  --secondary-300: #FFFDBE;
-  --secondary-500: #FFFC8B;
-  --secondary-700: #FEF61D;
-  --secondary-900: #938E00;
-  --primary-foreground: #E4F0FB;
-  --primary: #021A2E;
-  --primary-100: #E4F0FB;
-  --primary-300: #A3C9E8;
-  --primary-500: #36658B;
-  --primary-700: #0F3554;
-  --primary-900: #021A2E;
-  --popover-foreground: #0A0A0A;
-  --popover: #FFFFFF;
-  --card-foreground: #0A0A0A;
-  --card: #FFFFFF;
+@theme {
+  /* アレンデールの夜空 / 主役の紫 (#4A365F = 700) */
+  --color-aurora-50: #F5F2F9;
+  --color-aurora-100: #E9E2F1;
+  --color-aurora-200: #D2C6E1;
+  --color-aurora-300: #B4A2CB;
+  --color-aurora-400: #907BAD;
+  --color-aurora-500: #715C8E;
+  --color-aurora-600: #5B4874;
+  --color-aurora-700: #4A365F;
+  --color-aurora-800: #392949;
+  --color-aurora-900: #2A1D37;
+  --color-aurora-950: #1A1124;
+
+  /* 魔法の森の緑 (#546B56 = 600) */
+  --color-glacier-50: #F2F7F2;
+  --color-glacier-100: #E3EDE4;
+  --color-glacier-200: #C7DBC9;
+  --color-glacier-300: #A3C1A6;
+  --color-glacier-400: #7CA180;
+  --color-glacier-500: #667F68;
+  --color-glacier-600: #546B56;
+  --color-glacier-700: #445645;
+  --color-glacier-800: #374437;
+  --color-glacier-900: #263027;
+  --color-glacier-950: #161C17;
+
+  /* 城の灯り / ローズマリング (#EEA501 = 500, #F7C22C = 400) */
+  --color-gold-50: #FFF9E8;
+  --color-gold-100: #FDEFC5;
+  --color-gold-200: #FBE08D;
+  --color-gold-300: #F9D257;
+  --color-gold-400: #F7C22C;
+  --color-gold-500: #EEA501;
+  --color-gold-600: #C88800;
+  --color-gold-700: #9E6B00;
+  --color-gold-800: #79510A;
+  --color-gold-900: #5C3E0D;
+  --color-gold-950: #35210A;
+
+  /* 氷の白 / ニュートラル */
+  --color-frost-50: #F7FAFD;
+  --color-frost-100: #ECF2F9;
+  --color-frost-200: #D7E3F1;
+  --color-frost-300: #B8CADF;
+  --color-frost-400: #93A8C4;
+  --color-frost-500: #7288A6;
+  --color-frost-600: #5A6C87;
+  --color-frost-700: #47546B;
+  --color-frost-800: #333D52;
+  --color-frost-900: #232939;
+  --color-frost-950: #151925;
+
+  /* アートハランの氷のきらめき */
+  --color-ice-50: #EFFBFE;
+  --color-ice-100: #D6F4FC;
+  --color-ice-200: #AEE9F8;
+  --color-ice-300: #7BD9F1;
+  --color-ice-400: #45C2E4;
+  --color-ice-500: #22A5CB;
+  --color-ice-600: #1785AB;
+  --color-ice-700: #176A89;
+  --color-ice-800: #1A5670;
+  --color-ice-900: #1A485E;
+  --color-ice-950: #0B2E3F;
+
+  /* ------------------------------------------------------------------
+     Tailwind のデフォルトカラーもテーマ側に差し替える。
+     gray / green / yellow などの標準クラスがそのままこの世界観になる。
+     （red / rose / pink はエラー表現用にデフォルトのまま残す）
+     ------------------------------------------------------------------ */
+  /* purple → aurora */
+  --color-purple-50: var(--color-aurora-50);
+  --color-purple-100: var(--color-aurora-100);
+  --color-purple-200: var(--color-aurora-200);
+  --color-purple-300: var(--color-aurora-300);
+  --color-purple-400: var(--color-aurora-400);
+  --color-purple-500: var(--color-aurora-500);
+  --color-purple-600: var(--color-aurora-600);
+  --color-purple-700: var(--color-aurora-700);
+  --color-purple-800: var(--color-aurora-800);
+  --color-purple-900: var(--color-aurora-900);
+  --color-purple-950: var(--color-aurora-950);
+
+  /* violet → aurora */
+  --color-violet-50: var(--color-aurora-50);
+  --color-violet-100: var(--color-aurora-100);
+  --color-violet-200: var(--color-aurora-200);
+  --color-violet-300: var(--color-aurora-300);
+  --color-violet-400: var(--color-aurora-400);
+  --color-violet-500: var(--color-aurora-500);
+  --color-violet-600: var(--color-aurora-600);
+  --color-violet-700: var(--color-aurora-700);
+  --color-violet-800: var(--color-aurora-800);
+  --color-violet-900: var(--color-aurora-900);
+  --color-violet-950: var(--color-aurora-950);
+
+  /* fuchsia → aurora */
+  --color-fuchsia-50: var(--color-aurora-50);
+  --color-fuchsia-100: var(--color-aurora-100);
+  --color-fuchsia-200: var(--color-aurora-200);
+  --color-fuchsia-300: var(--color-aurora-300);
+  --color-fuchsia-400: var(--color-aurora-400);
+  --color-fuchsia-500: var(--color-aurora-500);
+  --color-fuchsia-600: var(--color-aurora-600);
+  --color-fuchsia-700: var(--color-aurora-700);
+  --color-fuchsia-800: var(--color-aurora-800);
+  --color-fuchsia-900: var(--color-aurora-900);
+  --color-fuchsia-950: var(--color-aurora-950);
+
+  /* indigo → aurora */
+  --color-indigo-50: var(--color-aurora-50);
+  --color-indigo-100: var(--color-aurora-100);
+  --color-indigo-200: var(--color-aurora-200);
+  --color-indigo-300: var(--color-aurora-300);
+  --color-indigo-400: var(--color-aurora-400);
+  --color-indigo-500: var(--color-aurora-500);
+  --color-indigo-600: var(--color-aurora-600);
+  --color-indigo-700: var(--color-aurora-700);
+  --color-indigo-800: var(--color-aurora-800);
+  --color-indigo-900: var(--color-aurora-900);
+  --color-indigo-950: var(--color-aurora-950);
+
+  /* green → glacier */
+  --color-green-50: var(--color-glacier-50);
+  --color-green-100: var(--color-glacier-100);
+  --color-green-200: var(--color-glacier-200);
+  --color-green-300: var(--color-glacier-300);
+  --color-green-400: var(--color-glacier-400);
+  --color-green-500: var(--color-glacier-500);
+  --color-green-600: var(--color-glacier-600);
+  --color-green-700: var(--color-glacier-700);
+  --color-green-800: var(--color-glacier-800);
+  --color-green-900: var(--color-glacier-900);
+  --color-green-950: var(--color-glacier-950);
+
+  /* emerald → glacier */
+  --color-emerald-50: var(--color-glacier-50);
+  --color-emerald-100: var(--color-glacier-100);
+  --color-emerald-200: var(--color-glacier-200);
+  --color-emerald-300: var(--color-glacier-300);
+  --color-emerald-400: var(--color-glacier-400);
+  --color-emerald-500: var(--color-glacier-500);
+  --color-emerald-600: var(--color-glacier-600);
+  --color-emerald-700: var(--color-glacier-700);
+  --color-emerald-800: var(--color-glacier-800);
+  --color-emerald-900: var(--color-glacier-900);
+  --color-emerald-950: var(--color-glacier-950);
+
+  /* lime → glacier */
+  --color-lime-50: var(--color-glacier-50);
+  --color-lime-100: var(--color-glacier-100);
+  --color-lime-200: var(--color-glacier-200);
+  --color-lime-300: var(--color-glacier-300);
+  --color-lime-400: var(--color-glacier-400);
+  --color-lime-500: var(--color-glacier-500);
+  --color-lime-600: var(--color-glacier-600);
+  --color-lime-700: var(--color-glacier-700);
+  --color-lime-800: var(--color-glacier-800);
+  --color-lime-900: var(--color-glacier-900);
+  --color-lime-950: var(--color-glacier-950);
+
+  /* yellow → gold */
+  --color-yellow-50: var(--color-gold-50);
+  --color-yellow-100: var(--color-gold-100);
+  --color-yellow-200: var(--color-gold-200);
+  --color-yellow-300: var(--color-gold-300);
+  --color-yellow-400: var(--color-gold-400);
+  --color-yellow-500: var(--color-gold-500);
+  --color-yellow-600: var(--color-gold-600);
+  --color-yellow-700: var(--color-gold-700);
+  --color-yellow-800: var(--color-gold-800);
+  --color-yellow-900: var(--color-gold-900);
+  --color-yellow-950: var(--color-gold-950);
+
+  /* amber → gold */
+  --color-amber-50: var(--color-gold-50);
+  --color-amber-100: var(--color-gold-100);
+  --color-amber-200: var(--color-gold-200);
+  --color-amber-300: var(--color-gold-300);
+  --color-amber-400: var(--color-gold-400);
+  --color-amber-500: var(--color-gold-500);
+  --color-amber-600: var(--color-gold-600);
+  --color-amber-700: var(--color-gold-700);
+  --color-amber-800: var(--color-gold-800);
+  --color-amber-900: var(--color-gold-900);
+  --color-amber-950: var(--color-gold-950);
+
+  /* orange → gold */
+  --color-orange-50: var(--color-gold-50);
+  --color-orange-100: var(--color-gold-100);
+  --color-orange-200: var(--color-gold-200);
+  --color-orange-300: var(--color-gold-300);
+  --color-orange-400: var(--color-gold-400);
+  --color-orange-500: var(--color-gold-500);
+  --color-orange-600: var(--color-gold-600);
+  --color-orange-700: var(--color-gold-700);
+  --color-orange-800: var(--color-gold-800);
+  --color-orange-900: var(--color-gold-900);
+  --color-orange-950: var(--color-gold-950);
+
+  /* gray → frost */
+  --color-gray-50: var(--color-frost-50);
+  --color-gray-100: var(--color-frost-100);
+  --color-gray-200: var(--color-frost-200);
+  --color-gray-300: var(--color-frost-300);
+  --color-gray-400: var(--color-frost-400);
+  --color-gray-500: var(--color-frost-500);
+  --color-gray-600: var(--color-frost-600);
+  --color-gray-700: var(--color-frost-700);
+  --color-gray-800: var(--color-frost-800);
+  --color-gray-900: var(--color-frost-900);
+  --color-gray-950: var(--color-frost-950);
+
+  /* slate → frost */
+  --color-slate-50: var(--color-frost-50);
+  --color-slate-100: var(--color-frost-100);
+  --color-slate-200: var(--color-frost-200);
+  --color-slate-300: var(--color-frost-300);
+  --color-slate-400: var(--color-frost-400);
+  --color-slate-500: var(--color-frost-500);
+  --color-slate-600: var(--color-frost-600);
+  --color-slate-700: var(--color-frost-700);
+  --color-slate-800: var(--color-frost-800);
+  --color-slate-900: var(--color-frost-900);
+  --color-slate-950: var(--color-frost-950);
+
+  /* zinc → frost */
+  --color-zinc-50: var(--color-frost-50);
+  --color-zinc-100: var(--color-frost-100);
+  --color-zinc-200: var(--color-frost-200);
+  --color-zinc-300: var(--color-frost-300);
+  --color-zinc-400: var(--color-frost-400);
+  --color-zinc-500: var(--color-frost-500);
+  --color-zinc-600: var(--color-frost-600);
+  --color-zinc-700: var(--color-frost-700);
+  --color-zinc-800: var(--color-frost-800);
+  --color-zinc-900: var(--color-frost-900);
+  --color-zinc-950: var(--color-frost-950);
+
+  /* neutral → frost */
+  --color-neutral-50: var(--color-frost-50);
+  --color-neutral-100: var(--color-frost-100);
+  --color-neutral-200: var(--color-frost-200);
+  --color-neutral-300: var(--color-frost-300);
+  --color-neutral-400: var(--color-frost-400);
+  --color-neutral-500: var(--color-frost-500);
+  --color-neutral-600: var(--color-frost-600);
+  --color-neutral-700: var(--color-frost-700);
+  --color-neutral-800: var(--color-frost-800);
+  --color-neutral-900: var(--color-frost-900);
+  --color-neutral-950: var(--color-frost-950);
+
+  /* stone → frost */
+  --color-stone-50: var(--color-frost-50);
+  --color-stone-100: var(--color-frost-100);
+  --color-stone-200: var(--color-frost-200);
+  --color-stone-300: var(--color-frost-300);
+  --color-stone-400: var(--color-frost-400);
+  --color-stone-500: var(--color-frost-500);
+  --color-stone-600: var(--color-frost-600);
+  --color-stone-700: var(--color-frost-700);
+  --color-stone-800: var(--color-frost-800);
+  --color-stone-900: var(--color-frost-900);
+  --color-stone-950: var(--color-frost-950);
+
+  /* blue → ice */
+  --color-blue-50: var(--color-ice-50);
+  --color-blue-100: var(--color-ice-100);
+  --color-blue-200: var(--color-ice-200);
+  --color-blue-300: var(--color-ice-300);
+  --color-blue-400: var(--color-ice-400);
+  --color-blue-500: var(--color-ice-500);
+  --color-blue-600: var(--color-ice-600);
+  --color-blue-700: var(--color-ice-700);
+  --color-blue-800: var(--color-ice-800);
+  --color-blue-900: var(--color-ice-900);
+  --color-blue-950: var(--color-ice-950);
+
+  /* sky → ice */
+  --color-sky-50: var(--color-ice-50);
+  --color-sky-100: var(--color-ice-100);
+  --color-sky-200: var(--color-ice-200);
+  --color-sky-300: var(--color-ice-300);
+  --color-sky-400: var(--color-ice-400);
+  --color-sky-500: var(--color-ice-500);
+  --color-sky-600: var(--color-ice-600);
+  --color-sky-700: var(--color-ice-700);
+  --color-sky-800: var(--color-ice-800);
+  --color-sky-900: var(--color-ice-900);
+  --color-sky-950: var(--color-ice-950);
+
+  /* cyan → ice */
+  --color-cyan-50: var(--color-ice-50);
+  --color-cyan-100: var(--color-ice-100);
+  --color-cyan-200: var(--color-ice-200);
+  --color-cyan-300: var(--color-ice-300);
+  --color-cyan-400: var(--color-ice-400);
+  --color-cyan-500: var(--color-ice-500);
+  --color-cyan-600: var(--color-ice-600);
+  --color-cyan-700: var(--color-ice-700);
+  --color-cyan-800: var(--color-ice-800);
+  --color-cyan-900: var(--color-ice-900);
+  --color-cyan-950: var(--color-ice-950);
+
+  /* teal → ice */
+  --color-teal-50: var(--color-ice-50);
+  --color-teal-100: var(--color-ice-100);
+  --color-teal-200: var(--color-ice-200);
+  --color-teal-300: var(--color-ice-300);
+  --color-teal-400: var(--color-ice-400);
+  --color-teal-500: var(--color-ice-500);
+  --color-teal-600: var(--color-ice-600);
+  --color-teal-700: var(--color-ice-700);
+  --color-teal-800: var(--color-ice-800);
+  --color-teal-900: var(--color-ice-900);
+  --color-teal-950: var(--color-ice-950);
+
+  --font-display: var(--font-cinzel), "Hiragino Mincho ProN", serif;
+
+  --animate-aurora: aurora 24s ease-in-out infinite;
+  --animate-snow: snow 26s linear infinite;
+  --animate-shimmer: shimmer 3.6s ease-in-out infinite;
+  --animate-breathe: breathe 7s ease-in-out infinite;
+  --animate-crystal: crystal 120s linear infinite;
+}
+
+:root {
+  --radius: 0.875rem;
+
+  --background: #120B1D;
+  --foreground: #ECF2F9;
+
+  --card: rgba(45, 32, 66, 0.55);
+  --card-foreground: #ECF2F9;
+  --popover: #1B1229;
+  --popover-foreground: #ECF2F9;
+
+  /* 主役のアクション = 城の灯りの金 */
+  --primary: #EEA501;
+  --primary-foreground: #1A1124;
+  --primary-100: #E9E2F1;
+  --primary-300: #B4A2CB;
+  --primary-500: #715C8E;
+  --primary-700: #4A365F;
+  --primary-900: #2A1D37;
+
+  /* 補助 = 魔法の森の緑 */
+  --secondary: #546B56;
+  --secondary-foreground: #E3EDE4;
+  --secondary-100: #FDEFC5;
+  --secondary-300: #F9D257;
+  --secondary-500: #F7C22C;
+  --secondary-700: #EEA501;
+  --secondary-900: #9E6B00;
+
+  --muted: rgba(180, 162, 203, 0.12);
+  --muted-foreground: #B8CADF;
+  --accent: rgba(123, 217, 241, 0.14);
+  --accent-foreground: #D6F4FC;
+
+  --destructive: #E4576B;
+
+  --border: rgba(180, 162, 203, 0.22);
+  --input: rgba(180, 162, 203, 0.28);
+  --ring: rgba(247, 194, 44, 0.55);
+
+  --chart-1: #F7C22C;
+  --chart-2: #7BD9F1;
+  --chart-3: #B4A2CB;
+  --chart-4: #7CA180;
+  --chart-5: #EEA501;
+
+  --sidebar: #1A1124;
+  --sidebar-foreground: #ECF2F9;
+  --sidebar-primary: #EEA501;
+  --sidebar-primary-foreground: #1A1124;
+  --sidebar-accent: rgba(123, 217, 241, 0.12);
+  --sidebar-accent-foreground: #D6F4FC;
+  --sidebar-border: rgba(180, 162, 203, 0.22);
+  --sidebar-ring: rgba(247, 194, 44, 0.55);
 }
 
 @theme inline {
@@ -99,12 +442,136 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
+  html {
+    color-scheme: dark;
+  }
+
   body {
+    /* 夜空そのものは SiteBackdrop が描く。ここは余白（オーバースクロール）用の地色 */
     @apply bg-background text-foreground;
+  }
+
+  ::selection {
+    background-color: rgba(247, 194, 44, 0.35);
+    color: #FFF9E8;
+  }
+
+  /* 氷柱のような細いスクロールバー */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(123, 217, 241, 0.5), rgba(180, 162, 203, 0.3));
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   氷のガラス面。カード・ダイアログ・操作バーの共通の質感。
+   -------------------------------------------------------------------------- */
+@utility glass {
+  background-image: linear-gradient(155deg, rgba(236, 242, 249, 0.14) 0%, rgba(74, 54, 95, 0.35) 45%, rgba(26, 17, 36, 0.55) 100%);
+  border: 1px solid rgba(214, 244, 252, 0.16);
+  box-shadow:
+    0 24px 60px -30px rgba(0, 0, 0, 0.9),
+    inset 0 1px 0 rgba(236, 242, 249, 0.25);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+}
+
+/* ガラス面の上辺に走る氷のハイライト */
+@utility ice-edge {
+  position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    inset-inline: 12%;
+    top: -1px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(214, 244, 252, 0.85), transparent);
+    pointer-events: none;
+  }
+}
+
+/* 氷を通した光のような見出し */
+@utility text-frozen {
+  background-image: linear-gradient(180deg, #FFFFFF 0%, #D6F4FC 45%, #7BD9F1 100%);
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 32px rgba(123, 217, 241, 0.25);
+}
+
+/* 城の灯りの見出し */
+@utility text-hearth {
+  background-image: linear-gradient(180deg, #FDEFC5 0%, #F7C22C 55%, #EEA501 100%);
+  background-clip: text;
+  color: transparent;
+}
+
+@keyframes aurora {
+  0%, 100% {
+    transform: translate3d(-4%, 0, 0) scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translate3d(4%, -3%, 0) scale(1.12);
+    opacity: 0.85;
+  }
+}
+
+@keyframes snow {
+  from {
+    background-position: 0 -600px, 0 -600px, 0 -600px;
+  }
+  to {
+    background-position: 0 600px, 240px 600px, -180px 600px;
+  }
+}
+
+@keyframes shimmer {
+  0%, 100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes breathe {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes crystal {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

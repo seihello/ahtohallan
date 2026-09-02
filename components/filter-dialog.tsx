@@ -44,6 +44,17 @@ function toLevels([min, max]: [number, number]): string[] {
   return Array.from({ length: max - min + 1 }, (_, index) => String(min + index));
 }
 
+/** 氷の結晶をあしらったセクション見出し */
+function SectionTitle({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex items-center justify-center gap-3">
+      <span className="h-px w-10 bg-gradient-to-r from-transparent to-ice-200/40" />
+      <h3 className="font-display text-sm tracking-[0.35em] text-frost-100 uppercase">{children}</h3>
+      <span className="h-px w-10 bg-gradient-to-l from-transparent to-ice-200/40" />
+    </div>
+  );
+}
+
 function TagFilterSection({
   options,
   selected,
@@ -55,16 +66,26 @@ function TagFilterSection({
 }) {
   return (
     <div className="space-y-4">
-      <h3 className="font-bold text-xl text-center">Tags</h3>
-      <div className="flex gap-y-4 flex-wrap">
+      <SectionTitle>Tags</SectionTitle>
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
         {options.map((option) => {
           const id = `tag-${option}`;
+          const isSelected = selected.includes(option);
           return (
-            <div key={option} className="grow flex items-center justify-center gap-x-2 w-1/3 min-w-40">
+            <Label
+              key={option}
+              htmlFor={id}
+              className={`flex cursor-pointer items-center gap-x-2 rounded-xl border px-3 py-2.5 text-sm transition-colors ${
+                isSelected
+                  ? "border-gold-400/50 bg-gold-500/12 text-gold-100"
+                  : "border-frost-200/15 bg-frost-100/5 text-frost-300 hover:border-ice-200/35 hover:text-frost-100"
+              }`}
+            >
               <Checkbox
                 id={id}
                 name={option}
-                checked={selected.includes(option)}
+                className="size-5"
+                checked={isSelected}
                 onCheckedChange={(checked: CheckedState) => {
                   if (checked === true) {
                     onChange(selected.includes(option) ? selected : [...selected, option]);
@@ -73,10 +94,8 @@ function TagFilterSection({
                   }
                 }}
               />
-              <Label htmlFor={id} className="grow">
-                {option}
-              </Label>
-            </div>
+              <span className="grow leading-tight">{option}</span>
+            </Label>
           );
         })}
       </div>
@@ -93,8 +112,8 @@ function LevelFilterSection({
 }) {
   return (
     <div className="space-y-4">
-      <h3 className="font-bold text-xl text-center">Levels</h3>
-      <div className="px-1 space-y-3 max-w-[300px] mx-auto">
+      <SectionTitle>Levels</SectionTitle>
+      <div className="mx-auto max-w-[300px] space-y-3 px-1">
         <Slider
           value={range}
           min={MIN_LEVEL}
@@ -107,7 +126,9 @@ function LevelFilterSection({
           {LEVELS.map((level, index) => (
             <span
               key={level}
-              className="absolute -translate-x-1/2 text-xs text-muted-foreground"
+              className={`absolute -translate-x-1/2 font-mono text-xs transition-colors ${
+                level >= range[0] && level <= range[1] ? "text-gold-300" : "text-frost-500"
+              }`}
               style={{ left: tickLeft(index) }}
             >
               {level}
@@ -137,19 +158,26 @@ export default function FilterDialog({ tagOptions }: Props) {
     }
   }, [isOpen, selectedTags, selectedLevels]);
 
+  const isFiltered = selectedTags.length > 0 || toRange(selectedLevels).join() !== `${MIN_LEVEL},${MAX_LEVEL}`;
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger className="rounded-full border size-10 flex justify-center items-center">
-        <IconFilter size={20} color="#666666" />
+      <DialogTrigger className="relative flex size-10 items-center justify-center rounded-full border border-frost-200/20 bg-frost-100/5 text-frost-200 backdrop-blur-sm transition-colors hover:border-ice-200/50 hover:text-ice-100">
+        <IconFilter size={18} stroke={1.6} />
+        {/* 絞り込み中の目印 */}
+        {isFiltered && (
+          <span className="absolute -top-0.5 -right-0.5 size-2.5 rounded-full bg-gold-400 shadow-[0_0_10px_rgba(247,194,44,0.9)]" />
+        )}
+        <span className="sr-only">Filters</span>
       </DialogTrigger>
-      <DialogContent className="max-h-[85dvh] flex flex-col">
+      <DialogContent className="flex max-h-[85dvh] flex-col">
         <DialogTitle className="sr-only">Filters</DialogTitle>
-        <div className="space-y-6 overflow-y-auto flex-1 min-h-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="min-h-0 flex-1 space-y-8 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <LevelFilterSection range={levelRangeTemp} onChange={setLevelRangeTemp} />
           <TagFilterSection options={tagOptions} selected={selectedTagsTemp} onChange={setSelectedTagsTemp} />
         </div>
         <Button
-          className="shrink-0"
+          className="w-full shrink-0"
           onClick={() => {
             setIsOpen(false);
             setSelectedLevels(toLevels(levelRangeTemp));

@@ -14,6 +14,7 @@ import { useAiExplanation } from "@/hooks/use-ai-explanation";
 import { useAiSentences } from "@/hooks/use-ai-sentences";
 import { getRandomWord } from "@/lib/neon/get-random-word";
 import { recordRecall } from "@/lib/neon/record-recall";
+import { IconSnowflake } from "@tabler/icons-react";
 
 type Props = {
   tagOptions: string[];
@@ -120,32 +121,65 @@ export default function RandomWordContainer({ tagOptions }: Props) {
   }, [selectedTags, selectedLevels, setExplanations, setSentences]);
 
   const isReady = words.length > 0 && currentIndex >= 0;
+  const progress = wordCount > 0 ? ((currentIndex + 1) / wordCount) * 100 : 0;
 
   const filteredExplanations = explanations.filter((explanation) => explanation.role === "assistant");
   const filteredSentences = sentences.filter((sentence) => sentence.role === "assistant");
 
   return (
-    <div className="h-screen flex flex-col items-end justify-center w-full max-w-256 mx-auto py-2 sm:px-8">
-      <div className="flex items-center justify-evenly gap-x-2 sm:order-1 px-2">
-        {wordCount >= 0 && (
-          <div className="text-gray-500">
-            {currentIndex + 1} / {wordCount}
+    <div className="mx-auto flex h-screen w-full max-w-256 flex-col items-end justify-center py-2 sm:px-8">
+      <header className="flex w-full items-center justify-between gap-x-3 px-4 sm:order-1 sm:px-2">
+        <div className="flex items-center gap-x-2.5">
+          <IconSnowflake size={22} stroke={1.2} className="animate-crystal text-ice-200" />
+          <div className="leading-tight">
+            <div className="font-display text-base font-bold tracking-[0.28em] text-frost-100 sm:text-lg">
+              AHTOHALLAN
+            </div>
+            <div className="text-[9px] tracking-[0.3em] text-ice-200/45 uppercase">Memory of every word</div>
           </div>
-        )}
-        <FilterDialog tagOptions={tagOptions} />
+        </div>
+
+        <div className="flex items-center gap-x-3">
+          {wordCount >= 0 && (
+            <div className="flex items-baseline gap-x-1 font-mono text-sm">
+              <span className="text-lg text-gold-300">{currentIndex + 1}</span>
+              <span className="text-frost-500">/</span>
+              <span className="text-frost-400">{wordCount}</span>
+            </div>
+          )}
+          <FilterDialog tagOptions={tagOptions} />
+        </div>
+      </header>
+
+      {/* 進捗。氷の上を灯りが進んでいくイメージ */}
+      <div className="mt-3 w-full px-4 sm:order-1 sm:px-2">
+        <div className="h-px w-full overflow-hidden rounded-full bg-frost-200/12">
+          <div
+            className="h-full bg-gradient-to-r from-gold-500 via-gold-300 to-ice-200 shadow-[0_0_12px_rgba(247,194,44,0.8)] transition-[width] duration-500"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
       </div>
-      <div className="w-full grow overflow-y-scroll px-6 pb-6 space-y-2 sm:order-3">
-        {isReady && (
+
+      <div className="w-full grow space-y-4 overflow-y-scroll px-4 pt-4 pb-6 sm:order-3 sm:px-2">
+        {isReady ? (
           <RandomWord word={words[currentIndex]} isDetailHidden={isDetailHidden} onReveal={onClickShowAnswer} />
+        ) : (
+          <div className="glass ice-edge flex h-48 items-center justify-center rounded-3xl">
+            <span className="animate-shimmer flex items-center gap-x-2 text-[11px] tracking-[0.35em] text-ice-100/80 uppercase">
+              <IconSnowflake size={14} stroke={1.5} />
+              {isFetchingWord || isLoadingLocalStorage ? "Listening to the river" : "No word found"}
+            </span>
+          </div>
         )}
 
         <RecallButtons
-          className="mx-auto w-fit hidden sm:flex gap-2 mt-12"
+          className="mx-auto mt-12 hidden w-fit gap-2 sm:flex"
           onSelect={onSelectRecall}
           disabled={!isReady || isRecording}
         />
         {filteredExplanations.length > 0 && (
-          <div className="w-full bg-green-50 p-2 sm:p-4 rounded-2xl text-sm sm:text-base">
+          <div className="glass rounded-2xl p-3 text-sm text-glacier-100 sm:p-4 sm:text-base">
             {filteredExplanations.map((explanation) => (
               <div key={explanation.id} className="whitespace-pre-wrap">
                 {explanation.parts
@@ -163,7 +197,7 @@ export default function RandomWordContainer({ tagOptions }: Props) {
           </div>
         )}
         {filteredSentences.length > 0 && (
-          <div className="w-full bg-yellow-50 p-2 sm:p-4 rounded-2xl text-sm sm:text-base">
+          <div className="glass rounded-2xl p-3 text-sm text-gold-100 sm:p-4 sm:text-base">
             {filteredSentences.map((sentence) => (
               <div key={sentence.id} className="whitespace-pre-wrap">
                 {sentence.parts
@@ -183,12 +217,12 @@ export default function RandomWordContainer({ tagOptions }: Props) {
       </div>
 
       <div
-        className={`w-full px-2 bg-white sm:w-auto flex flex-col sm:flex-row gap-2 sm:order-2 items-end sm:items-center shadow-[0px_0px_16px_6px_#EEEEEE] sm:shadow-none pt-4 sm:pt-2 ${
+        className={`flex w-full flex-col items-end gap-2 border-t border-frost-200/12 bg-aurora-950/70 px-4 pt-4 backdrop-blur-xl sm:order-2 sm:w-auto sm:flex-row sm:items-center sm:border-none sm:bg-transparent sm:px-2 sm:pt-2 sm:backdrop-blur-none ${
           isPwa ? "pb-16" : "pb-4 sm:pb-2"
         }`}
       >
         <RecallButtons
-          className="w-full flex gap-2 flex-1 sm:hidden"
+          className="flex w-full flex-1 gap-2 sm:hidden"
           onSelect={onSelectRecall}
           disabled={!isReady || isRecording}
         />
@@ -206,8 +240,9 @@ export default function RandomWordContainer({ tagOptions }: Props) {
         >
           Make Sentence
         </Button> */}
-        <div className="flex w-full sm:w-auto gap-x-2">
+        <div className="flex w-full gap-x-2 sm:w-auto">
           <Button
+            variant="outline"
             onClick={onClickPrev}
             disabled={!isReady || currentIndex === 0 || status === "submitted" || status === "streaming"}
             className="flex-1"
