@@ -13,7 +13,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-/** 見出し用。アレンデール城の紋章のような古典的なローマン体 */
 const cinzel = Cinzel({
   variable: "--font-cinzel",
   subsets: ["latin"],

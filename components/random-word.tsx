@@ -11,7 +11,6 @@ type Props = {
 export default function RandomWord({ word, isDetailHidden, onReveal }: Props) {
   return (
     <article className="glass ice-edge relative w-full overflow-hidden rounded-3xl p-5 whitespace-pre-line sm:p-8">
-      {/* 氷の結晶の透かし。ごくゆっくり回る */}
       <IconSnowflake
         aria-hidden
         className="animate-crystal pointer-events-none absolute -top-16 -right-16 size-56 text-ice-200/8 sm:size-72"
@@ -28,8 +27,6 @@ export default function RandomWord({ word, isDetailHidden, onReveal }: Props) {
 
       <div className="relative mt-6">
         <div
-          // ぼかしを「かける」ときはトランジションを付けない。
-          // 付けると次の単語に切り替えた瞬間、ぼけきるまでの間だけ中身が読めてしまう。
           className={`space-y-4 ${
             isDetailHidden ? "cursor-pointer blur-[6px] select-none" : "transition-[filter] duration-300"
           }`}
@@ -73,7 +70,6 @@ export default function RandomWord({ word, isDetailHidden, onReveal }: Props) {
           </div>
         </div>
 
-        {/* ぼかしの上に重ねるヒント。クリックは下のぼかし面に通す */}
         {isDetailHidden && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
             <span className="animate-shimmer flex items-center gap-2 rounded-full border border-ice-200/30 bg-aurora-950/50 px-4 py-2 text-[11px] tracking-[0.3em] text-ice-100 uppercase backdrop-blur-sm">

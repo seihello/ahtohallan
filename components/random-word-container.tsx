@@ -30,7 +30,6 @@ export default function RandomWordContainer({ tagOptions }: Props) {
   const [wordCount, setWordCount] = useState(-1);
   const [isFetchingWord, setIsFetchingWord] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
-  // state はレンダー後にしか反映されないので、同一フレーム内の連打は ref で止める
   const isRecordingRef = useRef(false);
   const [isDetailHidden, setIsDetailHidden] = useState(true);
 
@@ -151,7 +150,6 @@ export default function RandomWordContainer({ tagOptions }: Props) {
         </div>
       </header>
 
-      {/* 進捗。氷の上を灯りが進んでいくイメージ */}
       <div className="mt-3 w-full px-4 sm:order-1 sm:px-2">
         <div className="h-px w-full overflow-hidden rounded-full bg-frost-200/12">
           <div

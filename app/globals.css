@@ -3,14 +3,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* ==========================================================================
-   Ahtohallan — アレンデール城の夜とアートハランの氷をイメージしたテーマ
-   紫(#4A365F)を夜空、緑(#546B56)を魔法の森、黄(#EEA501 / #F7C22C)を城の灯り
-   として扱い、氷のような半透明のガラス面を重ねて構成する。
-   ========================================================================== */
-
 @theme {
-  /* アレンデールの夜空 / 主役の紫 (#4A365F = 700) */
   --color-aurora-50: #F5F2F9;
   --color-aurora-100: #E9E2F1;
   --color-aurora-200: #D2C6E1;
@@ -23,7 +16,6 @@
   --color-aurora-900: #2A1D37;
   --color-aurora-950: #1A1124;
 
-  /* 魔法の森の緑 (#546B56 = 600) */
   --color-glacier-50: #F2F7F2;
   --color-glacier-100: #E3EDE4;
   --color-glacier-200: #C7DBC9;
@@ -36,7 +28,6 @@
   --color-glacier-900: #263027;
   --color-glacier-950: #161C17;
 
-  /* 城の灯り / ローズマリング (#EEA501 = 500, #F7C22C = 400) */
   --color-gold-50: #FFF9E8;
   --color-gold-100: #FDEFC5;
   --color-gold-200: #FBE08D;
@@ -49,7 +40,6 @@
   --color-gold-900: #5C3E0D;
   --color-gold-950: #35210A;
 
-  /* 氷の白 / ニュートラル */
   --color-frost-50: #F7FAFD;
   --color-frost-100: #ECF2F9;
   --color-frost-200: #D7E3F1;
@@ -62,7 +52,6 @@
   --color-frost-900: #232939;
   --color-frost-950: #151925;
 
-  /* アートハランの氷のきらめき */
   --color-ice-50: #EFFBFE;
   --color-ice-100: #D6F4FC;
   --color-ice-200: #AEE9F8;
@@ -75,11 +64,6 @@
   --color-ice-900: #1A485E;
   --color-ice-950: #0B2E3F;
 
-  /* ------------------------------------------------------------------
-     Tailwind のデフォルトカラーもテーマ側に差し替える。
-     gray / green / yellow などの標準クラスがそのままこの世界観になる。
-     （red / rose / pink はエラー表現用にデフォルトのまま残す）
-     ------------------------------------------------------------------ */
   /* purple → aurora */
   --color-purple-50: var(--color-aurora-50);
   --color-purple-100: var(--color-aurora-100);
@@ -347,7 +331,6 @@
   --popover: #1B1229;
   --popover-foreground: #ECF2F9;
 
-  /* 主役のアクション = 城の灯りの金 */
   --primary: #EEA501;
   --primary-foreground: #1A1124;
   --primary-100: #E9E2F1;
@@ -356,7 +339,6 @@
   --primary-700: #4A365F;
   --primary-900: #2A1D37;
 
-  /* 補助 = 魔法の森の緑 */
   --secondary: #546B56;
   --secondary-foreground: #E3EDE4;
   --secondary-100: #FDEFC5;
@@ -452,7 +434,6 @@
   }
 
   body {
-    /* 夜空そのものは SiteBackdrop が描く。ここは余白（オーバースクロール）用の地色 */
     @apply bg-background text-foreground;
   }
 
@@ -461,7 +442,6 @@
     color: #FFF9E8;
   }
 
-  /* 氷柱のような細いスクロールバー */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -475,9 +455,6 @@
   }
 }
 
-/* --------------------------------------------------------------------------
-   氷のガラス面。カード・ダイアログ・操作バーの共通の質感。
-   -------------------------------------------------------------------------- */
 @utility glass {
   background-image: linear-gradient(155deg, rgba(236, 242, 249, 0.14) 0%, rgba(74, 54, 95, 0.35) 45%, rgba(26, 17, 36, 0.55) 100%);
   border: 1px solid rgba(214, 244, 252, 0.16);
@@ -488,7 +465,6 @@
   -webkit-backdrop-filter: blur(18px) saturate(140%);
 }
 
-/* ガラス面の上辺に走る氷のハイライト */
 @utility ice-edge {
   position: relative;
   &::before {
@@ -502,7 +478,6 @@
   }
 }
 
-/* 氷を通した光のような見出し */
 @utility text-frozen {
   background-image: linear-gradient(180deg, #FFFFFF 0%, #D6F4FC 45%, #7BD9F1 100%);
   background-clip: text;
@@ -510,7 +485,6 @@
   text-shadow: 0 0 32px rgba(123, 217, 241, 0.25);
 }
 
-/* 城の灯りの見出し */
 @utility text-hearth {
   background-image: linear-gradient(180deg, #FDEFC5 0%, #F7C22C 55%, #EEA501 100%);
   background-clip: text;

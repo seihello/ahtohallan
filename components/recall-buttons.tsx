@@ -6,7 +6,6 @@ import { RecallStatus } from "@/lib/types";
 
 type Variant = React.ComponentProps<typeof Button>["variant"];
 
-/** 3つの記憶ステータス。森の緑 → 城の灯り → 氷、の順に「知らなさ」が上がる */
 const RECALL_OPTIONS: { status: RecallStatus; label: string; variant: Variant }[] = [
   { status: "know", label: "Know it", variant: "glacier" },
   { status: "seen", label: "Seen it", variant: "hearth" },

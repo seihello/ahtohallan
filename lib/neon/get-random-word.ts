@@ -3,10 +3,6 @@
 import { sql } from "@/lib/neon/db";
 import { SearchOptions, Word } from "@/lib/types";
 
-/**
- * 条件に合う単語をランダムに1件返す。
- * count は除外前の該当件数（画面の「n / 全件」表示用）。
- */
 export async function getRandomWord(options: SearchOptions): Promise<{ word: Word | null; count: number }> {
   const tags = options.tags ?? [];
   const levels = (options.levels ?? []).map(Number).filter(Number.isInteger);

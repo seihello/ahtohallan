@@ -15,14 +15,8 @@ const MIN_LEVEL = 1;
 const MAX_LEVEL = 5;
 const LEVELS = Array.from({ length: MAX_LEVEL - MIN_LEVEL + 1 }, (_, index) => MIN_LEVEL + index);
 
-/** components/ui/slider.tsx のつまみ (size-6) と揃える */
 const THUMB_SIZE = 24;
 
-/**
- * 目盛りの数字をつまみの中心に合わせる。
- * Radix はつまみを `left: calc(percent% + offset px)` + translateX(-50%) で配置し、
- * offset = (つまみ幅 / 2) * (1 - percent / 50) で端が枠内に収まるよう補正している。
- */
 function tickLeft(index: number): string {
   const percent = (index / (LEVELS.length - 1)) * 100;
   const offset = (THUMB_SIZE / 2) * (1 - percent / 50);
@@ -30,7 +24,6 @@ function tickLeft(index: number): string {
   return `calc(${percent}% ${sign} ${Math.abs(offset)}px)`;
 }
 
-/** 保存されているレベル一覧をスライダーの [下限, 上限] に変換する。空 = 全レベル */
 function toRange(levels: string[]): [number, number] {
   const numbers = levels.map(Number).filter(Number.isInteger);
   if (numbers.length === 0) {
@@ -39,12 +32,10 @@ function toRange(levels: string[]): [number, number] {
   return [Math.max(MIN_LEVEL, Math.min(...numbers)), Math.min(MAX_LEVEL, Math.max(...numbers))];
 }
 
-/** スライダーの範囲をレベル一覧に戻す */
 function toLevels([min, max]: [number, number]): string[] {
   return Array.from({ length: max - min + 1 }, (_, index) => String(min + index));
 }
 
-/** 氷の結晶をあしらったセクション見出し */
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center justify-center gap-3">
@@ -164,7 +155,6 @@ export default function FilterDialog({ tagOptions }: Props) {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger className="relative flex size-10 items-center justify-center rounded-full border border-frost-200/20 bg-frost-100/5 text-frost-200 backdrop-blur-sm transition-colors hover:border-ice-200/50 hover:text-ice-100">
         <IconFilter size={18} stroke={1.6} />
-        {/* 絞り込み中の目印 */}
         {isFiltered && (
           <span className="absolute -top-0.5 -right-0.5 size-2.5 rounded-full bg-gold-400 shadow-[0_0_10px_rgba(247,194,44,0.9)]" />
         )}

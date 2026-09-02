@@ -1,8 +1,3 @@
-// Notion の Words データベースを Neon の words テーブルへ同期する。
-// id は Notion のページ ID をそのまま使う。
-//
-//   node scripts/import-words-from-notion.mjs             # upsert（既存行は更新）
-//   node scripts/import-words-from-notion.mjs --truncate  # 全削除してから取り込み
 import { neon } from "@neondatabase/serverless";
 import { Client } from "@notionhq/client";
 import fs from "fs";
@@ -23,7 +18,6 @@ for (const key of ["DATABASE_URL", "NOTION_API_KEY", "NOTION_DATABASE_ID_WORDS"]
 const sql = neon(process.env.DATABASE_URL);
 const notion = new Client({ auth: process.env.NOTION_API_KEY });
 
-/** rich_text を改行区切りの1つの文字列にまとめる */
 function richText(property) {
   if (property?.type !== "rich_text") return "";
   return property.rich_text
@@ -56,7 +50,7 @@ async function fetchWords() {
       if (!("properties" in page)) continue;
       const p = page.properties;
       const names = richText(p.Names);
-      if (!names) continue; // 空行は取り込まない
+      if (!names) continue;
 
       words.push({
         id: page.id,

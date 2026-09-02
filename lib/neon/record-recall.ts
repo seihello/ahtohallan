@@ -5,10 +5,6 @@ import { RecallStatus } from "@/lib/types";
 
 const RECALL_STATUSES: RecallStatus[] = ["know", "seen", "new"];
 
-/**
- * 押されたボタンを記録する。該当のカウントを1つ増やし、状態を最後に押したものに更新する。
- * server action はクライアントから直接叩けるので、値はここで検証する。
- */
 export async function recordRecall(wordId: string, status: RecallStatus): Promise<void> {
   if (!RECALL_STATUSES.includes(status)) {
     throw new Error(`不正な recall status: ${status}`);
