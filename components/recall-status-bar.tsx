@@ -34,7 +34,8 @@ export default function RecallStatusBar({ counts }: Props) {
           })}
       </div>
 
-      <div className="flex flex-wrap items-center justify-end gap-x-3 gap-y-1">
+      {/* ラベルは一旦非表示 */}
+      {/* <div className="flex flex-wrap items-center justify-end gap-x-3 gap-y-1">
         {SEGMENTS.map(({ key, label, dot, text }) => (
           <div key={key} className="flex items-center gap-x-1.5">
             <span className={`size-1.5 rounded-full ${dot}`} />
@@ -44,7 +45,7 @@ export default function RecallStatusBar({ counts }: Props) {
             </span>
           </div>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 }
