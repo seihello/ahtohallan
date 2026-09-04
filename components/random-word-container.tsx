@@ -174,7 +174,7 @@ export default function RandomWordContainer({ tagOptions }: Props) {
         <RecallButtons
           className="mx-auto mt-12 hidden w-fit gap-2 sm:flex"
           onSelect={onSelectRecall}
-          disabled={!isReady || isRecording}
+          disabled={!isReady || isRecording || isFetchingWord}
         />
         {filteredExplanations.length > 0 && (
           <div className="glass rounded-2xl p-3 text-sm text-glacier-100 sm:p-4 sm:text-base">
@@ -222,7 +222,7 @@ export default function RandomWordContainer({ tagOptions }: Props) {
         <RecallButtons
           className="flex w-full flex-1 gap-2 sm:hidden"
           onSelect={onSelectRecall}
-          disabled={!isReady || isRecording}
+          disabled={!isReady || isRecording || isFetchingWord}
         />
         {/* <Button
           variant="outline"
