@@ -19,4 +19,12 @@ export type Word = {
   recallStatus: RecallStatus | null;
 };
 
+export type RecallStatusCounts = {
+  know: number;
+  seen: number;
+  new: number;
+  untouched: number;
+  total: number;
+};
+
 export type SearchOptions = { excludeIds?: string[]; tags?: string[]; levels?: string[] };
