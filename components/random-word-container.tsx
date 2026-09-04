@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import RandomWord from "@/components/random-word";
 import RecallButtons from "@/components/recall-buttons";
 import { useDisplayMode } from "@/hooks/use-display-mode";
-import { RecallStatus, Word } from "@/lib/types";
+import { RecallStatus, RecallStatusCounts, Word } from "@/lib/types";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useAtom } from "jotai";
 import { selectedLevelsState, selectedTagsState } from "@/lib/jotai/random-word/state";
@@ -14,6 +14,8 @@ import { useAiExplanation } from "@/hooks/use-ai-explanation";
 import { useAiSentences } from "@/hooks/use-ai-sentences";
 import { getRandomWord } from "@/lib/neon/get-random-word";
 import { recordRecall } from "@/lib/neon/record-recall";
+import { getRecallStatusCounts } from "@/lib/neon/get-recall-status-counts";
+import RecallStatusBar from "@/components/recall-status-bar";
 import { IconSnowflake } from "@tabler/icons-react";
 
 type Props = {
@@ -32,6 +34,8 @@ export default function RandomWordContainer({ tagOptions }: Props) {
   const [isRecording, setIsRecording] = useState(false);
   const isRecordingRef = useRef(false);
   const [isDetailHidden, setIsDetailHidden] = useState(true);
+  const [statusCounts, setStatusCounts] = useState<RecallStatusCounts | null>(null);
+  const [statusVersion, setStatusVersion] = useState(0);
 
   const { isLoading: isLoadingLocalStorage } = useLocalStorage();
 
@@ -63,6 +67,7 @@ export default function RandomWordContainer({ tagOptions }: Props) {
     recordRecall(word.id, status);
     isRecordingRef.current = false;
     setIsRecording(false);
+    setStatusVersion((prev) => prev + 1);
 
     await onClickNext();
   };
@@ -111,6 +116,20 @@ export default function RandomWordContainer({ tagOptions }: Props) {
   }, [words, isLoadingLocalStorage, onClickNext]);
 
   useEffect(() => {
+    if (isLoadingLocalStorage) return;
+
+    let isStale = false;
+
+    getRecallStatusCounts({ tags: selectedTags, levels: selectedLevels }).then((counts) => {
+      if (!isStale) setStatusCounts(counts);
+    });
+
+    return () => {
+      isStale = true;
+    };
+  }, [selectedTags, selectedLevels, isLoadingLocalStorage, statusVersion]);
+
+  useEffect(() => {
     setCurrentIndex(-1);
     setIsDetailHidden(false);
     setExplanations([]);
@@ -150,13 +169,14 @@ export default function RandomWordContainer({ tagOptions }: Props) {
         </div>
       </header>
 
-      <div className="mt-3 w-full px-4 sm:order-1 sm:px-2">
+      <div className="mt-3 w-full space-y-2.5 px-4 sm:order-1 sm:px-2">
         <div className="h-px w-full overflow-hidden rounded-full bg-frost-200/12">
           <div
             className="h-full bg-gradient-to-r from-gold-500 via-gold-300 to-ice-200 shadow-[0_0_12px_rgba(247,194,44,0.8)] transition-[width] duration-500"
             style={{ width: `${progress}%` }}
           />
         </div>
+        <RecallStatusBar counts={statusCounts} />
       </div>
 
       <div className="w-full grow space-y-4 overflow-y-scroll px-4 pt-4 pb-6 sm:order-3 sm:px-2">
