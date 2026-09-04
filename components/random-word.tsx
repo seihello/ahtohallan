@@ -1,3 +1,4 @@
+import SpeakableWord from "@/components/speakable-word";
 import { Word } from "@/lib/types";
 import { IconSnowflake } from "@tabler/icons-react";
 import React from "react";
@@ -16,7 +17,7 @@ export default function RandomWord({ word, isDetailHidden, onReveal }: Props) {
           <span className="h-px w-6 bg-gradient-to-r from-transparent to-ice-200/60" />
           <span className="text-[10px] tracking-[0.4em] text-ice-200/60 uppercase">Ahtohallan remembers</span>
         </div>
-        <h2 className="text-frozen font-display text-2xl leading-tight font-bold sm:text-3xl">{word.names}</h2>
+        <SpeakableWord key={word.id} names={word.names} />
       </header>
 
       <div className="relative mt-3">
