@@ -28,7 +28,14 @@ export async function getRandomWord(options: SearchOptions): Promise<{ word: Wor
       (SELECT count(*)::int FROM filtered) AS count
     FROM filtered f
     WHERE NOT (f.id = ANY(${excludeIds}::text[]))
-    ORDER BY random()
+    ORDER BY
+      CASE
+        WHEN f.recall_status = 'new' THEN 0
+        WHEN f.recall_status = 'seen' THEN 1
+        WHEN f.recall_status IS NULL THEN 2
+        ELSE 3
+      END,
+      random()
     LIMIT 1
   `) as (Word & { count: number })[];
 
