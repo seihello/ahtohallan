@@ -17,6 +17,7 @@ import { getRandomWord } from "@/lib/neon/get-random-word";
 import { recordRecall } from "@/lib/neon/record-recall";
 import { getRecallStatusCounts } from "@/lib/neon/get-recall-status-counts";
 import RecallStatusBar from "@/components/recall-status-bar";
+import RecallStatusLabel from "@/components/recall-status-label";
 import { IconSnowflake } from "@tabler/icons-react";
 
 type Props = {
@@ -66,6 +67,7 @@ export default function RandomWordContainer({ tagOptions }: Props) {
     setIsRecording(true);
 
     recordRecall(word.id, status);
+    setWords((prev) => prev.map((item) => (item.id === word.id ? { ...item, recallStatus: status } : item)));
     isRecordingRef.current = false;
     setIsRecording(false);
     setStatusVersion((prev) => prev + 1);
@@ -193,7 +195,10 @@ export default function RandomWordContainer({ tagOptions }: Props) {
 
       <div className="w-full grow space-y-4 overflow-y-scroll px-4 pt-4 pb-6 sm:order-3 sm:px-2" {...swipeHandlers}>
         {isReady ? (
-          <RandomWord word={words[currentIndex]} isDetailHidden={isDetailHidden} onReveal={onClickShowAnswer} />
+          <>
+            <RandomWord word={words[currentIndex]} isDetailHidden={isDetailHidden} onReveal={onClickShowAnswer} />
+            <RecallStatusLabel status={words[currentIndex].recallStatus} />
+          </>
         ) : (
           <div className="glass ice-edge flex h-48 items-center justify-center rounded-3xl">
             <span className="animate-shimmer flex items-center gap-x-2 text-[11px] tracking-[0.35em] text-ice-100/80 uppercase">
