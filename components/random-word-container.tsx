@@ -191,10 +191,7 @@ export default function RandomWordContainer({ tagOptions }: Props) {
         <RecallStatusBar counts={statusCounts} />
       </div>
 
-      <div
-        className="w-full grow space-y-4 overflow-y-scroll px-4 pt-4 pb-6 sm:order-3 sm:px-2"
-        {...swipeHandlers}
-      >
+      <div className="w-full grow space-y-4 overflow-y-scroll px-4 pt-4 pb-6 sm:order-3 sm:px-2" {...swipeHandlers}>
         {isReady ? (
           <RandomWord word={words[currentIndex]} isDetailHidden={isDetailHidden} onReveal={onClickShowAnswer} />
         ) : (
@@ -250,8 +247,8 @@ export default function RandomWordContainer({ tagOptions }: Props) {
       </div>
 
       <div
-        className={`flex w-full flex-col items-end gap-2 border-t border-frost-200/12 bg-glacier-950/75 px-4 pt-4 backdrop-blur-xl sm:order-2 sm:w-auto sm:flex-row sm:items-center sm:border-none sm:bg-transparent sm:px-2 sm:pt-2 sm:backdrop-blur-none ${
-          isPwa ? "pb-16" : "pb-4 sm:pb-2"
+        className={`flex w-full flex-col items-end gap-2 border-t border-frost-200/12 bg-glacier-950/75 px-4 pt-6 backdrop-blur-xl sm:order-2 sm:w-auto sm:flex-row sm:items-center sm:border-none sm:bg-transparent sm:px-2 sm:pt-2 sm:backdrop-blur-none ${
+          isPwa ? "pb-16" : "pb-6 sm:pb-2"
         }`}
       >
         <RecallButtons
