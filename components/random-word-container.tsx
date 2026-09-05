@@ -10,6 +10,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useAtom } from "jotai";
 import { selectedLevelsState, selectedTagsState } from "@/lib/jotai/random-word/state";
 import { useLocalStorage } from "@/hooks/use-local-storage";
+import { useSwipe } from "@/hooks/use-swipe";
 import { useAiExplanation } from "@/hooks/use-ai-explanation";
 import { useAiSentences } from "@/hooks/use-ai-sentences";
 import { getRandomWord } from "@/lib/neon/get-random-word";
@@ -140,6 +141,17 @@ export default function RandomWordContainer({ tagOptions }: Props) {
 
   const isReady = words.length > 0 && currentIndex >= 0;
   const progress = wordCount > 0 ? ((currentIndex + 1) / wordCount) * 100 : 0;
+  const canGoPrev = isReady && currentIndex > 0;
+  const canGoNext = isReady && !isFetchingWord && currentIndex !== wordCount - 1;
+
+  const swipeHandlers = useSwipe({
+    onSwipeLeft: () => {
+      if (canGoNext) onClickNext();
+    },
+    onSwipeRight: () => {
+      if (canGoPrev) onClickPrev();
+    },
+  });
 
   const filteredExplanations = explanations.filter((explanation) => explanation.role === "assistant");
   const filteredSentences = sentences.filter((sentence) => sentence.role === "assistant");
@@ -179,7 +191,10 @@ export default function RandomWordContainer({ tagOptions }: Props) {
         <RecallStatusBar counts={statusCounts} />
       </div>
 
-      <div className="w-full grow space-y-4 overflow-y-scroll px-4 pt-4 pb-6 sm:order-3 sm:px-2">
+      <div
+        className="w-full grow space-y-4 overflow-y-scroll px-4 pt-4 pb-6 sm:order-3 sm:px-2"
+        {...swipeHandlers}
+      >
         {isReady ? (
           <RandomWord word={words[currentIndex]} isDetailHidden={isDetailHidden} onReveal={onClickShowAnswer} />
         ) : (
@@ -258,24 +273,18 @@ export default function RandomWordContainer({ tagOptions }: Props) {
         >
           Make Sentence
         </Button> */}
-        <div className="flex w-full gap-x-2 sm:w-auto">
+        <div className="hidden w-full gap-x-2 sm:flex sm:w-auto">
           <Button
             variant="outline"
             onClick={onClickPrev}
-            disabled={!isReady || currentIndex === 0 || status === "submitted" || status === "streaming"}
+            disabled={!canGoPrev || status === "submitted" || status === "streaming"}
             className="flex-1"
           >
             Prev
           </Button>
           <Button
             onClick={onClickNext}
-            disabled={
-              !isReady ||
-              isFetchingWord ||
-              currentIndex === wordCount - 1 ||
-              status === "submitted" ||
-              status === "streaming"
-            }
+            disabled={!canGoNext || status === "submitted" || status === "streaming"}
             className="flex-1"
           >
             Next
