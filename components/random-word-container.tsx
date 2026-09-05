@@ -6,7 +6,7 @@ import RandomWord from "@/components/random-word";
 import RecallButtons from "@/components/recall-buttons";
 import { useDisplayMode } from "@/hooks/use-display-mode";
 import { RecallStatus, RecallStatusCounts, Word } from "@/lib/types";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAtom } from "jotai";
 import { selectedLevelsState, selectedTagsState } from "@/lib/jotai/random-word/state";
 import { useLocalStorage } from "@/hooks/use-local-storage";
