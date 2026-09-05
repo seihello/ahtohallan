@@ -25,7 +25,7 @@ export default function RecallButtons({ className, onSelect, disabled }: Props) 
         <Button
           key={status}
           variant={variant}
-          className="w-auto flex-1 sm:w-36"
+          className="w-auto flex-1 sm:w-36 select-none"
           disabled={disabled}
           onClick={() => onSelect(status)}
         >
