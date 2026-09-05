@@ -30,9 +30,9 @@ export async function getRandomWord(options: SearchOptions): Promise<{ word: Wor
     WHERE NOT (f.id = ANY(${excludeIds}::text[]))
     ORDER BY
       CASE
-        WHEN f.recall_status = 'new' THEN 0
-        WHEN f.recall_status = 'seen' THEN 1
-        WHEN f.recall_status IS NULL THEN 2
+        WHEN f.recall_status IS NULL THEN 0
+        WHEN f.recall_status = 'new' THEN 1
+        WHEN f.recall_status = 'seen' THEN 2
         ELSE 3
       END,
       random()
