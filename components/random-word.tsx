@@ -6,10 +6,11 @@ import React from "react";
 type Props = {
   word: Word;
   isDetailHidden: boolean;
+  isAutoPlayEnabled: boolean;
   onReveal: () => void;
 };
 
-export default function RandomWord({ word, isDetailHidden, onReveal }: Props) {
+export default function RandomWord({ word, isDetailHidden, isAutoPlayEnabled, onReveal }: Props) {
   return (
     <article className="glass ice-edge relative w-full overflow-hidden rounded-3xl p-5 whitespace-pre-line sm:p-8">
       <header className="relative space-y-2">
@@ -17,7 +18,7 @@ export default function RandomWord({ word, isDetailHidden, onReveal }: Props) {
           <span className="h-px w-6 bg-gradient-to-r from-transparent to-ice-200/60" />
           <span className="text-[10px] tracking-[0.4em] text-ice-200/60 uppercase">Ahtohallan remembers</span>
         </div>
-        <SpeakableWord key={word.id} names={word.names} />
+        <SpeakableWord key={word.id} names={word.names} isAutoPlayEnabled={isAutoPlayEnabled} />
       </header>
 
       <div className="relative mt-3">

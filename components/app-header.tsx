@@ -11,7 +11,7 @@ type Props = {
 
 export default function AppHeader({ tagOptions, currentIndex, wordCount }: Props) {
   return (
-    <header className="flex w-full items-center justify-between gap-x-3 px-4 sm:order-1 sm:px-2">
+    <header className="flex w-full items-center justify-between gap-x-3 px-4 sm:px-2">
       <div className="flex items-center gap-x-2.5">
         <IconSnowflake size={22} stroke={1.2} className="animate-crystal text-ice-200" />
         <div className="leading-tight">

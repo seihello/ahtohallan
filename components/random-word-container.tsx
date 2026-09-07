@@ -8,6 +8,7 @@ import RecallButtons from "@/components/recall-buttons";
 import RecallStatusBar from "@/components/recall-status-bar";
 import RecallStatusLabel from "@/components/recall-status-label";
 import WordControls from "@/components/word-controls";
+import WordNavigation from "@/components/word-navigation";
 import WordPlaceholder from "@/components/word-placeholder";
 import { useAiExplanation } from "@/hooks/use-ai-explanation";
 import { useAiSentences } from "@/hooks/use-ai-sentences";
@@ -17,12 +18,14 @@ import { useSwipe } from "@/hooks/use-swipe";
 import { useWordQueue } from "@/hooks/use-word-queue";
 import { selectedLevelsState, selectedTagsState } from "@/lib/jotai/random-word/state";
 import { useAtom } from "jotai";
+import { useState } from "react";
 
 type Props = {
   tagOptions: string[];
 };
 
 export default function RandomWordContainer({ tagOptions }: Props) {
+  const [isAutoPlayEnabled, setIsAutoPlayEnabled] = useState(false);
   const [selectedTags] = useAtom(selectedTagsState);
   const [selectedLevels] = useAtom(selectedLevelsState);
   const { isLoading: isLoadingLocalStorage } = useLocalStorage();
@@ -73,15 +76,31 @@ export default function RandomWordContainer({ tagOptions }: Props) {
     <div className="mx-auto flex h-screen w-full max-w-256 flex-col items-end justify-center py-2 sm:px-8">
       <AppHeader tagOptions={tagOptions} currentIndex={queue.currentIndex} wordCount={queue.wordCount} />
 
-      <div className="mt-3 w-full space-y-2.5 px-4 sm:order-1 sm:px-2">
+      <div className="mt-3 w-full space-y-2.5 px-4 sm:px-2">
         <ProgressBar value={queue.progress} />
         <RecallStatusBar counts={statusCounts} />
       </div>
 
-      <div className="w-full grow space-y-4 overflow-y-scroll px-4 pt-4 pb-6 sm:order-3 sm:px-2" {...swipeHandlers}>
+      <div className="mt-3 w-full">
+        <WordNavigation
+          canGoPrev={queue.canGoPrev}
+          canGoNext={queue.canGoNext}
+          isAutoPlayEnabled={isAutoPlayEnabled}
+          onClickPrev={queue.goPrev}
+          onClickNext={queue.goNext}
+          onToggleAutoPlay={() => setIsAutoPlayEnabled((prev) => !prev)}
+        />
+      </div>
+
+      <div className="w-full grow space-y-4 overflow-y-scroll px-4 pt-4 pb-6 sm:px-2" {...swipeHandlers}>
         {queue.currentWord ? (
           <>
-            <RandomWord word={queue.currentWord} isDetailHidden={queue.isDetailHidden} onReveal={queue.showAnswer} />
+            <RandomWord
+              word={queue.currentWord}
+              isDetailHidden={queue.isDetailHidden}
+              isAutoPlayEnabled={isAutoPlayEnabled}
+              onReveal={queue.showAnswer}
+            />
             <RecallStatusLabel status={queue.currentWord.recallStatus} />
           </>
         ) : (
@@ -98,14 +117,7 @@ export default function RandomWordContainer({ tagOptions }: Props) {
         <AiMessagePanel messages={sentences} className="text-gold-100" />
       </div>
 
-      <WordControls
-        onSelectRecall={queue.selectRecall}
-        isRecallDisabled={queue.isRecallDisabled}
-        canGoPrev={queue.canGoPrev}
-        canGoNext={queue.canGoNext}
-        onClickPrev={queue.goPrev}
-        onClickNext={queue.goNext}
-      >
+      <WordControls onSelectRecall={queue.selectRecall} isRecallDisabled={queue.isRecallDisabled}>
         {/* <Button
           variant="outline"
           onClick={() => generateExplanation(queue.currentWord.names)}

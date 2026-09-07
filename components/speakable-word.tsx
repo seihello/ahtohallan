@@ -11,12 +11,30 @@ function toSpeech(names: string) {
     .join(", ");
 }
 
+function speak(names: string, onStart: () => void, onEnd: () => void) {
+  if (!("speechSynthesis" in window)) return;
+
+  const synth = window.speechSynthesis;
+  synth.cancel();
+
+  const utterance = new SpeechSynthesisUtterance(toSpeech(names));
+  utterance.lang = "en-US";
+  utterance.rate = 0.95;
+  utterance.onstart = onStart;
+  utterance.onend = onEnd;
+  utterance.onerror = onEnd;
+
+  synth.speak(utterance);
+}
+
 type Props = {
   names: string;
+  isAutoPlayEnabled: boolean;
 };
 
-export default function SpeakableWord({ names }: Props) {
+export default function SpeakableWord({ names, isAutoPlayEnabled }: Props) {
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [shouldAutoPlay] = useState(isAutoPlayEnabled);
 
   useEffect(() => {
     return () => {
@@ -24,20 +42,22 @@ export default function SpeakableWord({ names }: Props) {
     };
   }, []);
 
+  useEffect(() => {
+    if (!shouldAutoPlay) return;
+
+    speak(
+      names,
+      () => setIsSpeaking(true),
+      () => setIsSpeaking(false)
+    );
+  }, [shouldAutoPlay, names]);
+
   const onClick = () => {
-    if (!("speechSynthesis" in window)) return;
-
-    const synth = window.speechSynthesis;
-    synth.cancel();
-
-    const utterance = new SpeechSynthesisUtterance(toSpeech(names));
-    utterance.lang = "en-US";
-    utterance.rate = 0.95;
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
-
-    synth.speak(utterance);
+    speak(
+      names,
+      () => setIsSpeaking(true),
+      () => setIsSpeaking(false)
+    );
   };
 
   return (
