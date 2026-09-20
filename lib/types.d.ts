@@ -27,4 +27,11 @@ export type RecallStatusCounts = {
   total: number;
 };
 
-export type SearchOptions = { excludeIds?: string[]; tags?: string[]; levels?: string[] };
+export type TagMatchMode = "any" | "all";
+
+export type SearchOptions = {
+  excludeIds?: string[];
+  tags?: string[];
+  tagMatchMode?: TagMatchMode;
+  levels?: string[];
+};

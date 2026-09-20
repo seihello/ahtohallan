@@ -7,11 +7,16 @@ export async function getRandomWord(options: SearchOptions): Promise<{ word: Wor
   const tags = options.tags ?? [];
   const levels = (options.levels ?? []).map(Number).filter(Number.isInteger);
   const excludeIds = options.excludeIds ?? [];
+  const tagMatchMode = options.tagMatchMode ?? "any";
 
   const rows = (await sql`
     WITH filtered AS (
       SELECT * FROM words
-      WHERE (cardinality(${tags}::text[]) = 0 OR tags && ${tags}::text[])
+      WHERE (
+          cardinality(${tags}::text[]) = 0
+          OR (${tagMatchMode} = 'all' AND tags @> ${tags}::text[])
+          OR (${tagMatchMode} = 'any' AND tags && ${tags}::text[])
+        )
         AND (cardinality(${levels}::int[]) = 0 OR level = ANY(${levels}::int[]))
     )
     SELECT

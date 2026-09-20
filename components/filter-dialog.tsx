@@ -9,7 +9,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { useAtom } from "jotai";
-import { selectedLevelsState, selectedTagsState } from "@/lib/jotai/random-word/state";
+import { selectedLevelsState, selectedTagsState, tagMatchModeState } from "@/lib/jotai/random-word/state";
+import { TagMatchMode } from "@/lib/types";
 
 const MIN_LEVEL = 1;
 const MAX_LEVEL = 5;
@@ -46,18 +47,58 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
   );
 }
 
+function TagMatchModeToggle({ mode, onChange }: { mode: TagMatchMode; onChange: (next: TagMatchMode) => void }) {
+  const options: { value: TagMatchMode; label: string; hint: string }[] = [
+    { value: "any", label: "OR", hint: "いずれかのタグを含む" },
+    { value: "all", label: "AND", hint: "すべてのタグを含む" },
+  ];
+
+  return (
+    <div className="flex justify-center">
+      <div
+        role="radiogroup"
+        aria-label="Tag match mode"
+        className="flex gap-x-1 rounded-full border border-frost-200/15 bg-frost-100/5 p-1"
+      >
+        {options.map(({ value, label, hint }) => (
+          <button
+            key={value}
+            type="button"
+            role="radio"
+            aria-checked={mode === value}
+            title={hint}
+            onClick={() => onChange(value)}
+            className={`cursor-pointer rounded-full px-4 py-1 text-[11px] tracking-[0.2em] uppercase transition-colors ${
+              mode === value
+                ? "bg-gold-500/20 text-gold-200 shadow-[inset_0_0_0_1px_rgba(247,194,44,0.45)]"
+                : "text-frost-400 hover:text-frost-100"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function TagFilterSection({
   options,
   selected,
+  mode,
   onChange,
+  onChangeMode,
 }: {
   options: string[];
   selected: string[];
+  mode: TagMatchMode;
   onChange: (next: string[]) => void;
+  onChangeMode: (next: TagMatchMode) => void;
 }) {
   return (
     <div className="space-y-4">
       <SectionTitle>Tags</SectionTitle>
+      <TagMatchModeToggle mode={mode} onChange={onChangeMode} />
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
         {options.map((option) => {
           const id = `tag-${option}`;
@@ -139,15 +180,18 @@ export default function FilterDialog({ tagOptions }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedTags, setSelectedTags] = useAtom(selectedTagsState);
   const [selectedLevels, setSelectedLevels] = useAtom(selectedLevelsState);
+  const [tagMatchMode, setTagMatchMode] = useAtom(tagMatchModeState);
   const [selectedTagsTemp, setSelectedTagsTemp] = useState<string[]>(selectedTags);
   const [levelRangeTemp, setLevelRangeTemp] = useState<[number, number]>(toRange(selectedLevels));
+  const [tagMatchModeTemp, setTagMatchModeTemp] = useState<TagMatchMode>(tagMatchMode);
 
   useEffect(() => {
     if (!isOpen) {
       setSelectedTagsTemp(selectedTags);
       setLevelRangeTemp(toRange(selectedLevels));
+      setTagMatchModeTemp(tagMatchMode);
     }
-  }, [isOpen, selectedTags, selectedLevels]);
+  }, [isOpen, selectedTags, selectedLevels, tagMatchMode]);
 
   const isFiltered = selectedTags.length > 0 || toRange(selectedLevels).join() !== `${MIN_LEVEL},${MAX_LEVEL}`;
 
@@ -164,7 +208,13 @@ export default function FilterDialog({ tagOptions }: Props) {
         <DialogTitle className="sr-only">Filters</DialogTitle>
         <div className="min-h-0 flex-1 space-y-8 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <LevelFilterSection range={levelRangeTemp} onChange={setLevelRangeTemp} />
-          <TagFilterSection options={tagOptions} selected={selectedTagsTemp} onChange={setSelectedTagsTemp} />
+          <TagFilterSection
+            options={tagOptions}
+            selected={selectedTagsTemp}
+            mode={tagMatchModeTemp}
+            onChange={setSelectedTagsTemp}
+            onChangeMode={setTagMatchModeTemp}
+          />
         </div>
         <Button
           className="w-full shrink-0"
@@ -172,6 +222,7 @@ export default function FilterDialog({ tagOptions }: Props) {
             setIsOpen(false);
             setSelectedLevels(toLevels(levelRangeTemp));
             setSelectedTags(selectedTagsTemp);
+            setTagMatchMode(tagMatchModeTemp);
           }}
         >
           OK

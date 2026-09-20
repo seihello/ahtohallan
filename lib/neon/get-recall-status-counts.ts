@@ -6,6 +6,7 @@ import { RecallStatusCounts, SearchOptions } from "@/lib/types";
 export async function getRecallStatusCounts(options: SearchOptions): Promise<RecallStatusCounts> {
   const tags = options.tags ?? [];
   const levels = (options.levels ?? []).map(Number).filter(Number.isInteger);
+  const tagMatchMode = options.tagMatchMode ?? "any";
 
   const rows = (await sql`
     SELECT
@@ -15,7 +16,11 @@ export async function getRecallStatusCounts(options: SearchOptions): Promise<Rec
       count(*) FILTER (WHERE recall_status IS NULL)::int AS untouched,
       count(*)::int AS total
     FROM words
-    WHERE (cardinality(${tags}::text[]) = 0 OR tags && ${tags}::text[])
+    WHERE (
+        cardinality(${tags}::text[]) = 0
+        OR (${tagMatchMode} = 'all' AND tags @> ${tags}::text[])
+        OR (${tagMatchMode} = 'any' AND tags && ${tags}::text[])
+      )
       AND (cardinality(${levels}::int[]) = 0 OR level = ANY(${levels}::int[]))
   `) as RecallStatusCounts[];
 
