@@ -1,17 +1,16 @@
 "use client";
 
 import { getRecallStatusCounts } from "@/lib/neon/get-recall-status-counts";
-import { RecallStatusCounts, TagMatchMode } from "@/lib/types";
+import { RecallStatusCounts, TagFilter } from "@/lib/types";
 import { useEffect, useState } from "react";
 
 type Options = {
-  tags: string[];
-  tagMatchMode: TagMatchMode;
+  tagFilters: TagFilter[];
   levels: string[];
   isEnabled: boolean;
 };
 
-export function useRecallStatusCounts({ tags, tagMatchMode, levels, isEnabled }: Options) {
+export function useRecallStatusCounts({ tagFilters, levels, isEnabled }: Options) {
   const [counts, setCounts] = useState<RecallStatusCounts | null>(null);
   const [version, setVersion] = useState(0);
 
@@ -20,14 +19,14 @@ export function useRecallStatusCounts({ tags, tagMatchMode, levels, isEnabled }:
 
     let isStale = false;
 
-    getRecallStatusCounts({ tags, tagMatchMode, levels }).then((nextCounts) => {
+    getRecallStatusCounts({ tagFilters, levels }).then((nextCounts) => {
       if (!isStale) setCounts(nextCounts);
     });
 
     return () => {
       isStale = true;
     };
-  }, [tags, tagMatchMode, levels, isEnabled, version]);
+  }, [tagFilters, levels, isEnabled, version]);
 
   const refresh = () => setVersion((prev) => prev + 1);
 

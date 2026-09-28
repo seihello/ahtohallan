@@ -1,42 +1,33 @@
 "use client";
 
-import { selectedLevelsState, selectedTagsState, tagMatchModeState } from "@/lib/jotai/random-word/state";
+import { selectedLevelsState, tagFiltersState } from "@/lib/jotai/random-word/state";
 import { getSelectedLevels } from "@/lib/local-storage/get-selected-levels";
-import { getSelectedTags } from "@/lib/local-storage/get-selected-tags";
-import { getTagMatchMode } from "@/lib/local-storage/get-tag-match-mode";
+import { getTagFilters } from "@/lib/local-storage/get-tag-filters";
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
-import { setSelectedTags as setSelectedTagsToLocalStorage } from "@/lib/local-storage/set-selected-tags";
 import { setSelectedLevels as setSelectedLevelsToLocalStorage } from "@/lib/local-storage/set-selected-levels";
-import { setTagMatchMode as setTagMatchModeToLocalStorage } from "@/lib/local-storage/set-tag-match-mode";
+import { setTagFilters as setTagFiltersToLocalStorage } from "@/lib/local-storage/set-tag-filters";
 
 export function useLocalStorage() {
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedTags, setSelectedTags] = useAtom(selectedTagsState);
+  const [tagFilters, setTagFilters] = useAtom(tagFiltersState);
   const [selectedLevels, setSelectedLevels] = useAtom(selectedLevelsState);
-  const [tagMatchMode, setTagMatchMode] = useAtom(tagMatchModeState);
 
   useEffect(() => {
-    setSelectedTags(getSelectedTags());
+    setTagFilters(getTagFilters());
     setSelectedLevels(getSelectedLevels());
-    setTagMatchMode(getTagMatchMode());
     setIsLoading(false);
-  }, [setSelectedTags, setSelectedLevels, setTagMatchMode]);
+  }, [setTagFilters, setSelectedLevels]);
 
   useEffect(() => {
     if (isLoading) return;
-    setSelectedTagsToLocalStorage(selectedTags);
-  }, [isLoading, selectedTags]);
+    setTagFiltersToLocalStorage(tagFilters);
+  }, [isLoading, tagFilters]);
 
   useEffect(() => {
     if (isLoading) return;
     setSelectedLevelsToLocalStorage(selectedLevels);
   }, [isLoading, selectedLevels]);
-
-  useEffect(() => {
-    if (isLoading) return;
-    setTagMatchModeToLocalStorage(tagMatchMode);
-  }, [isLoading, tagMatchMode]);
 
   return {
     isLoading,

@@ -4,19 +4,17 @@ import { sql } from "@/lib/neon/db";
 import { SearchOptions, Word } from "@/lib/types";
 
 export async function getRandomWord(options: SearchOptions): Promise<{ word: Word | null; count: number }> {
-  const tags = options.tags ?? [];
+  const tagFilters = options.tagFilters ?? [];
+  const andTags = tagFilters.filter((filter) => filter.mode === "and").map((filter) => filter.tag);
+  const orTags = tagFilters.filter((filter) => filter.mode === "or").map((filter) => filter.tag);
   const levels = (options.levels ?? []).map(Number).filter(Number.isInteger);
   const excludeIds = options.excludeIds ?? [];
-  const tagMatchMode = options.tagMatchMode ?? "any";
 
   const rows = (await sql`
     WITH filtered AS (
       SELECT * FROM words
-      WHERE (
-          cardinality(${tags}::text[]) = 0
-          OR (${tagMatchMode} = 'all' AND tags @> ${tags}::text[])
-          OR (${tagMatchMode} = 'any' AND tags && ${tags}::text[])
-        )
+      WHERE (cardinality(${andTags}::text[]) = 0 OR tags @> ${andTags}::text[])
+        AND (cardinality(${orTags}::text[]) = 0 OR tags && ${orTags}::text[])
         AND (cardinality(${levels}::int[]) = 0 OR level = ANY(${levels}::int[]))
     )
     SELECT

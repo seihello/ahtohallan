@@ -27,11 +27,15 @@ export type RecallStatusCounts = {
   total: number;
 };
 
-export type TagMatchMode = "any" | "all";
+export type TagFilterMode = "and" | "or";
+
+export type TagFilter = {
+  tag: string;
+  mode: TagFilterMode;
+};
 
 export type SearchOptions = {
   excludeIds?: string[];
-  tags?: string[];
-  tagMatchMode?: TagMatchMode;
+  tagFilters?: TagFilter[];
   levels?: string[];
 };

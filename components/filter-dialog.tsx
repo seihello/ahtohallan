@@ -3,14 +3,11 @@
 import React, { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { IconFilter } from "@tabler/icons-react";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
-import { CheckedState } from "@radix-ui/react-checkbox";
 import { useAtom } from "jotai";
-import { selectedLevelsState, selectedTagsState, tagMatchModeState } from "@/lib/jotai/random-word/state";
-import { TagMatchMode } from "@/lib/types";
+import { selectedLevelsState, tagFiltersState } from "@/lib/jotai/random-word/state";
+import { TagFilter, TagFilterMode } from "@/lib/types";
 
 const MIN_LEVEL = 1;
 const MAX_LEVEL = 5;
@@ -47,87 +44,93 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
   );
 }
 
-function TagMatchModeToggle({ mode, onChange }: { mode: TagMatchMode; onChange: (next: TagMatchMode) => void }) {
-  const options: { value: TagMatchMode; label: string; hint: string }[] = [
-    { value: "any", label: "OR", hint: "いずれかのタグを含む" },
-    { value: "all", label: "AND", hint: "すべてのタグを含む" },
-  ];
+const MODE_SYMBOL: Record<TagFilterMode, string> = {
+  and: "&",
+  or: "|",
+};
 
+const NEXT_MODE: Record<string, TagFilterMode | null> = {
+  none: "and",
+  and: "or",
+  or: null,
+};
+
+function toNextFilters(filters: TagFilter[], tag: string): TagFilter[] {
+  const current = filters.find((filter) => filter.tag === tag);
+  const next = NEXT_MODE[current?.mode ?? "none"];
+
+  if (next === null) return filters.filter((filter) => filter.tag !== tag);
+  if (!current) return [...filters, { tag, mode: next }];
+
+  return filters.map((filter) => (filter.tag === tag ? { ...filter, mode: next } : filter));
+}
+
+function TagModeBadge({ mode, isSmall }: { mode?: TagFilterMode; isSmall?: boolean }) {
   return (
-    <div className="flex justify-center">
-      <div
-        role="radiogroup"
-        aria-label="Tag match mode"
-        className="flex gap-x-1 rounded-full border border-frost-200/15 bg-frost-100/5 p-1"
-      >
-        {options.map(({ value, label, hint }) => (
-          <button
-            key={value}
-            type="button"
-            role="radio"
-            aria-checked={mode === value}
-            title={hint}
-            onClick={() => onChange(value)}
-            className={`cursor-pointer rounded-full px-4 py-1 text-[11px] tracking-[0.2em] uppercase transition-colors ${
-              mode === value
-                ? "bg-gold-500/20 text-gold-200 shadow-[inset_0_0_0_1px_rgba(247,194,44,0.45)]"
-                : "text-frost-400 hover:text-frost-100"
-            }`}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
+    <span
+      className={`flex shrink-0 items-center justify-center rounded-full border font-mono font-semibold ${
+        isSmall ? "size-5 text-[11px]" : "size-6 text-[13px]"
+      } ${
+        mode === "and"
+          ? "border-gold-400 bg-gold-500/80 text-timber-950"
+          : mode === "or"
+            ? "border-ice-300 bg-ice-400/80 text-glacier-950"
+            : "border-frost-200/25 bg-frost-100/5"
+      }`}
+    >
+      {mode ? MODE_SYMBOL[mode] : ""}
+    </span>
+  );
+}
+
+function TagModeLegend() {
+  return (
+    <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[11px] text-frost-300">
+      <span className="flex items-center gap-x-1.5">
+        <TagModeBadge mode="and" isSmall />
+        AND検索
+      </span>
+      <span className="flex items-center gap-x-1.5">
+        <TagModeBadge mode="or" isSmall />
+        OR検索
+      </span>
     </div>
   );
 }
 
 function TagFilterSection({
   options,
-  selected,
-  mode,
+  filters,
   onChange,
-  onChangeMode,
 }: {
   options: string[];
-  selected: string[];
-  mode: TagMatchMode;
-  onChange: (next: string[]) => void;
-  onChangeMode: (next: TagMatchMode) => void;
+  filters: TagFilter[];
+  onChange: (next: TagFilter[]) => void;
 }) {
   return (
     <div className="space-y-4">
       <SectionTitle>Tags</SectionTitle>
-      <TagMatchModeToggle mode={mode} onChange={onChangeMode} />
+      <TagModeLegend />
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
         {options.map((option) => {
-          const id = `tag-${option}`;
-          const isSelected = selected.includes(option);
+          const mode = filters.find((filter) => filter.tag === option)?.mode;
           return (
-            <Label
+            <button
               key={option}
-              htmlFor={id}
-              className={`flex cursor-pointer items-center gap-x-2 rounded-xl border px-3 py-2.5 text-sm transition-colors ${
-                isSelected
+              type="button"
+              aria-label={`${option}: ${mode ? mode.toUpperCase() : "off"}`}
+              onClick={() => onChange(toNextFilters(filters, option))}
+              className={`flex cursor-pointer items-center gap-x-2 rounded-xl border px-3 py-2.5 text-left text-sm transition-colors ${
+                mode === "and"
                   ? "border-gold-400/50 bg-gold-500/12 text-gold-100"
-                  : "border-frost-200/15 bg-frost-100/5 text-frost-300 hover:border-ice-200/35 hover:text-frost-100"
+                  : mode === "or"
+                    ? "border-ice-300/45 bg-ice-500/12 text-ice-100"
+                    : "border-frost-200/15 bg-frost-100/5 text-frost-300 hover:border-ice-200/35 hover:text-frost-100"
               }`}
             >
-              <Checkbox
-                id={id}
-                name={option}
-                className="size-5"
-                checked={isSelected}
-                onCheckedChange={(checked: CheckedState) => {
-                  if (checked === true) {
-                    onChange(selected.includes(option) ? selected : [...selected, option]);
-                  } else if (checked === false) {
-                    onChange(selected.filter((prevOption) => prevOption !== option));
-                  }
-                }}
-              />
+              <TagModeBadge mode={mode} />
               <span className="grow leading-tight">{option}</span>
-            </Label>
+            </button>
           );
         })}
       </div>
@@ -178,22 +181,19 @@ type Props = {
 
 export default function FilterDialog({ tagOptions }: Props) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedTags, setSelectedTags] = useAtom(selectedTagsState);
+  const [tagFilters, setTagFilters] = useAtom(tagFiltersState);
   const [selectedLevels, setSelectedLevels] = useAtom(selectedLevelsState);
-  const [tagMatchMode, setTagMatchMode] = useAtom(tagMatchModeState);
-  const [selectedTagsTemp, setSelectedTagsTemp] = useState<string[]>(selectedTags);
+  const [tagFiltersTemp, setTagFiltersTemp] = useState<TagFilter[]>(tagFilters);
   const [levelRangeTemp, setLevelRangeTemp] = useState<[number, number]>(toRange(selectedLevels));
-  const [tagMatchModeTemp, setTagMatchModeTemp] = useState<TagMatchMode>(tagMatchMode);
 
   useEffect(() => {
     if (!isOpen) {
-      setSelectedTagsTemp(selectedTags);
+      setTagFiltersTemp(tagFilters);
       setLevelRangeTemp(toRange(selectedLevels));
-      setTagMatchModeTemp(tagMatchMode);
     }
-  }, [isOpen, selectedTags, selectedLevels, tagMatchMode]);
+  }, [isOpen, tagFilters, selectedLevels]);
 
-  const isFiltered = selectedTags.length > 0 || toRange(selectedLevels).join() !== `${MIN_LEVEL},${MAX_LEVEL}`;
+  const isFiltered = tagFilters.length > 0 || toRange(selectedLevels).join() !== `${MIN_LEVEL},${MAX_LEVEL}`;
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -208,21 +208,14 @@ export default function FilterDialog({ tagOptions }: Props) {
         <DialogTitle className="sr-only">Filters</DialogTitle>
         <div className="min-h-0 flex-1 space-y-8 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <LevelFilterSection range={levelRangeTemp} onChange={setLevelRangeTemp} />
-          <TagFilterSection
-            options={tagOptions}
-            selected={selectedTagsTemp}
-            mode={tagMatchModeTemp}
-            onChange={setSelectedTagsTemp}
-            onChangeMode={setTagMatchModeTemp}
-          />
+          <TagFilterSection options={tagOptions} filters={tagFiltersTemp} onChange={setTagFiltersTemp} />
         </div>
         <Button
           className="w-full shrink-0"
           onClick={() => {
             setIsOpen(false);
             setSelectedLevels(toLevels(levelRangeTemp));
-            setSelectedTags(selectedTagsTemp);
-            setTagMatchMode(tagMatchModeTemp);
+            setTagFilters(tagFiltersTemp);
           }}
         >
           OK
