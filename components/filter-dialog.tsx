@@ -6,8 +6,8 @@ import { IconFilter } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { useAtom } from "jotai";
-import { selectedLevelsState, tagFiltersState } from "@/lib/jotai/random-word/state";
-import { TagFilter, TagFilterMode } from "@/lib/types";
+import { recallStatusesState, selectedLevelsState, tagFiltersState } from "@/lib/jotai/random-word/state";
+import { RecallStatusFilter, TagFilter, TagFilterMode } from "@/lib/types";
 
 const MIN_LEVEL = 1;
 const MAX_LEVEL = 5;
@@ -138,6 +138,49 @@ function TagFilterSection({
   );
 }
 
+const RECALL_STATUS_OPTIONS: { value: RecallStatusFilter; label: string; selected: string }[] = [
+  { value: "untouched", label: "Untouched", selected: "border-frost-200/40 bg-frost-100/12 text-frost-100" },
+  { value: "new", label: "New to me", selected: "border-ice-300/45 bg-ice-500/15 text-ice-100" },
+  { value: "seen", label: "Seen it", selected: "border-gold-400/50 bg-gold-500/15 text-gold-100" },
+  { value: "know", label: "Know it", selected: "border-glacier-300/50 bg-glacier-600/35 text-glacier-100" },
+];
+
+function RecallStatusFilterSection({
+  selected,
+  onChange,
+}: {
+  selected: RecallStatusFilter[];
+  onChange: (next: RecallStatusFilter[]) => void;
+}) {
+  return (
+    <div className="space-y-4">
+      <SectionTitle>Status</SectionTitle>
+      <div className="grid grid-cols-2 gap-2">
+        {RECALL_STATUS_OPTIONS.map(({ value, label, selected: selectedClassName }) => {
+          const isSelected = selected.includes(value);
+          return (
+            <button
+              key={value}
+              type="button"
+              aria-pressed={isSelected}
+              onClick={() =>
+                onChange(isSelected ? selected.filter((status) => status !== value) : [...selected, value])
+              }
+              className={`cursor-pointer rounded-xl border px-3 py-2.5 text-sm transition-colors ${
+                isSelected
+                  ? selectedClassName
+                  : "border-frost-200/15 bg-frost-100/5 text-frost-400 hover:border-ice-200/35 hover:text-frost-100"
+              }`}
+            >
+              {label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function LevelFilterSection({
   range,
   onChange,
@@ -183,17 +226,23 @@ export default function FilterDialog({ tagOptions }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [tagFilters, setTagFilters] = useAtom(tagFiltersState);
   const [selectedLevels, setSelectedLevels] = useAtom(selectedLevelsState);
+  const [recallStatuses, setRecallStatuses] = useAtom(recallStatusesState);
   const [tagFiltersTemp, setTagFiltersTemp] = useState<TagFilter[]>(tagFilters);
   const [levelRangeTemp, setLevelRangeTemp] = useState<[number, number]>(toRange(selectedLevels));
+  const [recallStatusesTemp, setRecallStatusesTemp] = useState<RecallStatusFilter[]>(recallStatuses);
 
   useEffect(() => {
     if (!isOpen) {
       setTagFiltersTemp(tagFilters);
       setLevelRangeTemp(toRange(selectedLevels));
+      setRecallStatusesTemp(recallStatuses);
     }
-  }, [isOpen, tagFilters, selectedLevels]);
+  }, [isOpen, tagFilters, selectedLevels, recallStatuses]);
 
-  const isFiltered = tagFilters.length > 0 || toRange(selectedLevels).join() !== `${MIN_LEVEL},${MAX_LEVEL}`;
+  const isFiltered =
+    tagFilters.length > 0 ||
+    toRange(selectedLevels).join() !== `${MIN_LEVEL},${MAX_LEVEL}` ||
+    (recallStatuses.length > 0 && recallStatuses.length < RECALL_STATUS_OPTIONS.length);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -208,6 +257,7 @@ export default function FilterDialog({ tagOptions }: Props) {
         <DialogTitle className="sr-only">Filters</DialogTitle>
         <div className="min-h-0 flex-1 space-y-8 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <LevelFilterSection range={levelRangeTemp} onChange={setLevelRangeTemp} />
+          <RecallStatusFilterSection selected={recallStatusesTemp} onChange={setRecallStatusesTemp} />
           <TagFilterSection options={tagOptions} filters={tagFiltersTemp} onChange={setTagFiltersTemp} />
         </div>
         <Button
@@ -215,6 +265,7 @@ export default function FilterDialog({ tagOptions }: Props) {
           onClick={() => {
             setIsOpen(false);
             setSelectedLevels(toLevels(levelRangeTemp));
+            setRecallStatuses(recallStatusesTemp);
             setTagFilters(tagFiltersTemp);
           }}
         >

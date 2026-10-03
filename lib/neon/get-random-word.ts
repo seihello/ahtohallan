@@ -9,6 +9,7 @@ export async function getRandomWord(options: SearchOptions): Promise<{ word: Wor
   const orTags = tagFilters.filter((filter) => filter.mode === "or").map((filter) => filter.tag);
   const levels = (options.levels ?? []).map(Number).filter(Number.isInteger);
   const excludeIds = options.excludeIds ?? [];
+  const recallStatuses = options.recallStatuses ?? [];
 
   const rows = (await sql`
     WITH filtered AS (
@@ -16,6 +17,10 @@ export async function getRandomWord(options: SearchOptions): Promise<{ word: Wor
       WHERE (cardinality(${andTags}::text[]) = 0 OR tags @> ${andTags}::text[])
         AND (cardinality(${orTags}::text[]) = 0 OR tags && ${orTags}::text[])
         AND (cardinality(${levels}::int[]) = 0 OR level = ANY(${levels}::int[]))
+        AND (
+          cardinality(${recallStatuses}::text[]) = 0
+          OR COALESCE(recall_status, 'untouched') = ANY(${recallStatuses}::text[])
+        )
     )
     SELECT
       f.id,

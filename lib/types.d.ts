@@ -27,6 +27,8 @@ export type RecallStatusCounts = {
   total: number;
 };
 
+export type RecallStatusFilter = RecallStatus | "untouched";
+
 export type TagFilterMode = "and" | "or";
 
 export type TagFilter = {
@@ -38,4 +40,5 @@ export type SearchOptions = {
   excludeIds?: string[];
   tagFilters?: TagFilter[];
   levels?: string[];
+  recallStatuses?: RecallStatusFilter[];
 };

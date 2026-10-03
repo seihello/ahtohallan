@@ -2,18 +2,26 @@
 
 import { getRandomWord } from "@/lib/neon/get-random-word";
 import { recordRecall } from "@/lib/neon/record-recall";
-import { RecallStatus, TagFilter, Word } from "@/lib/types";
+import { RecallStatus, RecallStatusFilter, TagFilter, Word } from "@/lib/types";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 type Options = {
   tagFilters: TagFilter[];
   levels: string[];
+  recallStatuses: RecallStatusFilter[];
   isEnabled: boolean;
   onWordChange: () => void;
   onRecallRecorded: () => void;
 };
 
-export function useWordQueue({ tagFilters, levels, isEnabled, onWordChange, onRecallRecorded }: Options) {
+export function useWordQueue({
+  tagFilters,
+  levels,
+  recallStatuses,
+  isEnabled,
+  onWordChange,
+  onRecallRecorded,
+}: Options) {
   const [words, setWords] = useState<Word[]>([]);
   const [currentIndex, setCurrentIndex] = useState(-1);
   const [wordCount, setWordCount] = useState(-1);
@@ -46,6 +54,7 @@ export function useWordQueue({ tagFilters, levels, isEnabled, onWordChange, onRe
       tagFilters,
       excludeIds: words.map((word) => word.id),
       levels,
+      recallStatuses,
     });
 
     if (word) {
@@ -57,7 +66,7 @@ export function useWordQueue({ tagFilters, levels, isEnabled, onWordChange, onRe
     }
 
     setIsFetching(false);
-  }, [currentIndex, isFetching, tagFilters, levels, words]);
+  }, [currentIndex, isFetching, tagFilters, levels, recallStatuses, words]);
 
   const goPrev = () => {
     setIsDetailHidden(true);
@@ -93,7 +102,7 @@ export function useWordQueue({ tagFilters, levels, isEnabled, onWordChange, onRe
     callbacksRef.current.onWordChange();
     setWords([]);
     setWordCount(-1);
-  }, [tagFilters, levels]);
+  }, [tagFilters, levels, recallStatuses]);
 
   const isReady = words.length > 0 && currentIndex >= 0;
 

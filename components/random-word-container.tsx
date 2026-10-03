@@ -16,7 +16,7 @@ import { useLocalStorage } from "@/hooks/use-local-storage";
 import { useRecallStatusCounts } from "@/hooks/use-recall-status-counts";
 import { useSwipe } from "@/hooks/use-swipe";
 import { useWordQueue } from "@/hooks/use-word-queue";
-import { selectedLevelsState, tagFiltersState } from "@/lib/jotai/random-word/state";
+import { recallStatusesState, selectedLevelsState, tagFiltersState } from "@/lib/jotai/random-word/state";
 import { useAtom } from "jotai";
 import { useState } from "react";
 
@@ -28,6 +28,7 @@ export default function RandomWordContainer({ tagOptions }: Props) {
   const [isAutoPlayEnabled, setIsAutoPlayEnabled] = useState(false);
   const [tagFilters] = useAtom(tagFiltersState);
   const [selectedLevels] = useAtom(selectedLevelsState);
+  const [recallStatuses] = useAtom(recallStatusesState);
   const { isLoading: isLoadingLocalStorage } = useLocalStorage();
 
   const {
@@ -58,6 +59,7 @@ export default function RandomWordContainer({ tagOptions }: Props) {
   const queue = useWordQueue({
     tagFilters,
     levels: selectedLevels,
+    recallStatuses,
     isEnabled: !isLoadingLocalStorage,
     onWordChange: clearAiMessages,
     onRecallRecorded: refreshStatusCounts,
