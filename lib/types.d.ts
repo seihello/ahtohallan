@@ -27,6 +27,21 @@ export type RecallStatusCounts = {
   total: number;
 };
 
+export type QuizChoice = {
+  word: string;
+  meanings: string;
+};
+
+export type QuizQuestion = {
+  id: string;
+  sentence: string;
+  blank: string;
+  answer: string;
+  choices: QuizChoice[];
+  level: number;
+  translation: string;
+};
+
 export type RecallStatusFilter = RecallStatus | "untouched";
 
 export type TagFilterMode = "and" | "or";

@@ -1,7 +1,8 @@
 "use client";
 
 import FilterDialog from "@/components/filter-dialog";
-import { IconSnowflake } from "@tabler/icons-react";
+import { IconPencilQuestion, IconSnowflake } from "@tabler/icons-react";
+import Link from "next/link";
 
 type Props = {
   tagOptions: string[];
@@ -28,6 +29,13 @@ export default function AppHeader({ tagOptions, currentIndex, wordCount }: Props
             <span className="text-frost-400">{wordCount}</span>
           </div>
         )}
+        <Link
+          href="/quiz"
+          aria-label="Vocabulary quiz"
+          className="flex size-10 items-center justify-center rounded-full border border-frost-200/20 bg-frost-100/5 text-frost-200 backdrop-blur-sm transition-colors hover:border-ice-200/50 hover:text-ice-100"
+        >
+          <IconPencilQuestion size={18} stroke={1.6} />
+        </Link>
         <FilterDialog tagOptions={tagOptions} />
       </div>
     </header>
