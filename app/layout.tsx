@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Cinzel, Geist, Geist_Mono } from "next/font/google";
 import ServiceWorkerRegistrar from "@/components/service-worker-registrar";
+import { SiteNavSidebar } from "@/components/site-nav";
 import SiteBackdrop from "@/components/site-backdrop";
 import "./globals.css";
 
@@ -45,7 +46,8 @@ export default function RootLayout({
       >
         <SiteBackdrop />
         <ServiceWorkerRegistrar />
-        {children}
+        <SiteNavSidebar />
+        <div className="sm:pl-60">{children}</div>
       </body>
     </html>
   );
