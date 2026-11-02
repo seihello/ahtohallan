@@ -1,7 +1,9 @@
 "use server";
 
 import { sql } from "@/lib/neon/db";
-import { SearchOptions, Word } from "@/lib/types";
+import { RecallStatusFilter, SearchOptions, Word } from "@/lib/types";
+
+const ALL_RECALL_STATUSES: RecallStatusFilter[] = ["know", "seen", "new", "untouched"];
 
 export async function getRandomWord(options: SearchOptions): Promise<{ word: Word | null; count: number }> {
   const tagFilters = options.tagFilters ?? [];
@@ -10,6 +12,7 @@ export async function getRandomWord(options: SearchOptions): Promise<{ word: Wor
   const levels = (options.levels ?? []).map(Number).filter(Number.isInteger);
   const excludeIds = options.excludeIds ?? [];
   const recallStatuses = options.recallStatuses ?? [];
+  const isPrioritized = recallStatuses.length > 0 && recallStatuses.length < ALL_RECALL_STATUSES.length;
 
   const rows = (await sql`
     WITH filtered AS (
@@ -38,6 +41,7 @@ export async function getRandomWord(options: SearchOptions): Promise<{ word: Wor
     WHERE NOT (f.id = ANY(${excludeIds}::text[]))
     ORDER BY
       CASE
+        WHEN NOT ${isPrioritized} THEN 0
         WHEN f.recall_status IS NULL THEN 0
         WHEN f.recall_status = 'new' THEN 1
         WHEN f.recall_status = 'seen' THEN 2
