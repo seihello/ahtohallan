@@ -17,6 +17,7 @@ type Options = {
 export function useFlashWords({ tagFilters, levels, recallStatuses, isEnabled }: Options) {
   const [words, setWords] = useState<Word[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [shownCount, setShownCount] = useState(0);
   const [intervalMs, setIntervalMs] = useState(1500);
   const [isPlaying, setIsPlaying] = useState(false);
   const isFetchingRef = useRef(false);
@@ -24,6 +25,7 @@ export function useFlashWords({ tagFilters, levels, recallStatuses, isEnabled }:
   useEffect(() => {
     setWords([]);
     setCurrentIndex(0);
+    setShownCount(0);
     setIsPlaying(false);
   }, [tagFilters, levels, recallStatuses]);
 
@@ -51,7 +53,10 @@ export function useFlashWords({ tagFilters, levels, recallStatuses, isEnabled }:
   useEffect(() => {
     if (!isPlaying || words.length === 0) return;
 
-    const timer = window.setInterval(() => setCurrentIndex((prev) => prev + 1), intervalMs);
+    const timer = window.setInterval(() => {
+      setCurrentIndex((prev) => prev + 1);
+      setShownCount((prev) => prev + 1);
+    }, intervalMs);
 
     return () => window.clearInterval(timer);
   }, [isPlaying, intervalMs, words.length]);
@@ -59,10 +64,14 @@ export function useFlashWords({ tagFilters, levels, recallStatuses, isEnabled }:
   return {
     word: words[currentIndex] ?? null,
     currentIndex,
+    shownCount,
     intervalMs,
     isPlaying,
     setIntervalMs,
     togglePlaying: () => setIsPlaying((prev) => !prev),
-    goNext: () => setCurrentIndex((prev) => prev + 1),
+    goNext: () => {
+      setCurrentIndex((prev) => prev + 1);
+      setShownCount((prev) => prev + 1);
+    },
   };
 }

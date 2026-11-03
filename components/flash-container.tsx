@@ -18,16 +18,17 @@ export default function FlashContainer({ tagOptions }: Props) {
   const [recallStatuses] = useAtom(recallStatusesState);
   const { isLoading } = useLocalStorage();
 
-  const { word, currentIndex, intervalMs, isPlaying, setIntervalMs, togglePlaying, goNext } = useFlashWords({
-    tagFilters,
-    levels: selectedLevels,
-    recallStatuses,
-    isEnabled: !isLoading,
-  });
+  const { word, currentIndex, shownCount, intervalMs, isPlaying, setIntervalMs, togglePlaying, goNext } =
+    useFlashWords({
+      tagFilters,
+      levels: selectedLevels,
+      recallStatuses,
+      isEnabled: !isLoading,
+    });
 
   return (
     <div className="mx-auto flex h-screen w-full max-w-256 flex-col pt-2 sm:px-8">
-      <FlashHeader tagOptions={tagOptions} shownCount={currentIndex} />
+      <FlashHeader tagOptions={tagOptions} shownCount={shownCount} />
 
       <div className="flex w-full grow items-center justify-center px-4 py-6 sm:px-2">
         <FlashCard word={word} intervalMs={intervalMs} isPlaying={isPlaying} flashKey={currentIndex} />
