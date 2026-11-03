@@ -1,0 +1,36 @@
+"use client";
+
+import FilterDialog from "@/components/filter-dialog";
+import { SiteNavTrigger } from "@/components/site-nav";
+import { IconSnowflake } from "@tabler/icons-react";
+
+type Props = {
+  tagOptions: string[];
+  shownCount: number;
+};
+
+export default function FlashHeader({ tagOptions, shownCount }: Props) {
+  return (
+    <header className="flex w-full items-center justify-between gap-x-3 px-4 sm:px-2">
+      <div className="flex items-center gap-x-2.5">
+        <SiteNavTrigger />
+        <div className="leading-tight sm:hidden">
+          <div className="font-display text-base font-bold tracking-[0.28em] text-frost-100">FLASH</div>
+          <div className="text-[9px] tracking-[0.3em] text-ice-200/45 uppercase">Rapid review</div>
+        </div>
+        <div className="hidden items-center gap-x-2.5 sm:flex">
+          <IconSnowflake size={20} stroke={1.2} className="animate-crystal text-ice-200" />
+          <span className="font-display text-sm tracking-[0.28em] text-frost-200">FLASH</span>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-x-3">
+        <div className="font-mono text-sm">
+          <span className="text-lg text-gold-300">{shownCount}</span>
+          <span className="ml-1 text-[10px] tracking-[0.2em] text-frost-500 uppercase">words</span>
+        </div>
+        <FilterDialog tagOptions={tagOptions} />
+      </div>
+    </header>
+  );
+}

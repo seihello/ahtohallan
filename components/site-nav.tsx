@@ -1,7 +1,7 @@
 "use client";
 
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { IconCards, IconMenu2, IconPencilQuestion, IconSnowflake } from "@tabler/icons-react";
+import { IconBolt, IconCards, IconMenu2, IconPencilQuestion, IconSnowflake } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -9,6 +9,7 @@ import { useState } from "react";
 const NAV_ITEMS = [
   { href: "/", label: "Words", caption: "単語をめくる", Icon: IconCards },
   { href: "/quiz", label: "Quiz", caption: "4択で確かめる", Icon: IconPencilQuestion },
+  { href: "/flash", label: "Flash", caption: "高速でめくる", Icon: IconBolt },
 ];
 
 function Wordmark() {
