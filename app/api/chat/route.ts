@@ -1,5 +1,5 @@
 import { streamText } from "ai";
-import { openai } from "@ai-sdk/openai";
+import { claude } from "@/lib/ai/claude";
 
 export const runtime = "edge";
 
@@ -8,10 +8,9 @@ export async function POST(req: Request) {
   const { messages } = await req.json();
 
   const result = streamText({
-    model: openai("gpt-4o"),
+    model: claude,
     messages,
-    maxTokens: 1024,
-    temperature: 0.7,
+    maxTokens: 16000,
   });
 
   return result.toDataStreamResponse();

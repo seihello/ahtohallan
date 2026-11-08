@@ -1,5 +1,6 @@
 "use server";
 
+import { generateQuizSentence } from "@/lib/ai/generate-quiz-sentence";
 import { sql } from "@/lib/neon/db";
 import { QuizChoice, QuizQuestion } from "@/lib/types";
 
@@ -96,5 +97,65 @@ export async function getQuizQuestion(excludeIds: string[] = []): Promise<QuizQu
     choices: shuffle([{ word, meanings }, ...(distractors ?? [])]),
     level,
     translation: toTranslation(sentences),
+  };
+}
+
+export async function getAiQuizQuestion(excludeIds: string[] = []): Promise<QuizQuestion | null> {
+  const rows = (await sql`
+    WITH pool AS (
+      SELECT
+        id,
+        split_part(names, chr(10), 1) AS word,
+        meanings,
+        COALESCE(level, 0) AS level
+      FROM words
+      WHERE tags @> ARRAY['英検']::text[]
+        AND split_part(names, chr(10), 1) ~ '^[A-Za-z''-]+$'
+    ),
+    answer AS (
+      SELECT * FROM pool
+      WHERE NOT (id = ANY(${excludeIds}::text[]))
+      ORDER BY random()
+      LIMIT 1
+    )
+    SELECT
+      answer.id,
+      answer.word,
+      answer.meanings,
+      answer.level,
+      (
+        SELECT jsonb_agg(distractor)
+        FROM (
+          SELECT pool.word, pool.meanings FROM pool
+          WHERE pool.id <> answer.id AND pool.word <> answer.word
+          ORDER BY (pool.level = answer.level) DESC, random()
+          LIMIT 3
+        ) AS distractor
+      ) AS distractors
+    FROM answer
+  `) as Omit<Row, "sentences">[];
+
+  if (rows.length === 0) return null;
+
+  const { id, word, meanings, level, distractors } = rows[0];
+  const choices = distractors ?? [];
+
+  const generated = await generateQuizSentence(
+    word,
+    meanings,
+    choices.map((choice) => choice.word),
+    BLANK
+  );
+
+  if (!generated) return null;
+
+  return {
+    id,
+    sentence: generated.sentence,
+    blank: BLANK,
+    answer: word,
+    choices: shuffle([{ word, meanings }, ...choices]),
+    level,
+    translation: generated.translation,
   };
 }

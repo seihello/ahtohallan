@@ -2,6 +2,7 @@
 
 import QuizCard from "@/components/quiz-card";
 import QuizHeader from "@/components/quiz-header";
+import QuizSourceTabs from "@/components/quiz-source-tabs";
 import { Button } from "@/components/ui/button";
 import { useDisplayMode } from "@/hooks/use-display-mode";
 import { useQuiz } from "@/hooks/use-quiz";
@@ -9,13 +10,18 @@ import { IconSnowflake } from "@tabler/icons-react";
 
 export default function QuizContainer() {
   const { isPwa } = useDisplayMode();
-  const { question, selected, isAnswered, isLoading, answeredCount, correctCount, select, goNext } = useQuiz();
+  const { source, question, selected, isAnswered, isLoading, answeredCount, correctCount, select, selectSource, goNext } =
+    useQuiz();
 
   return (
     <div className="mx-auto flex h-screen w-full max-w-256 flex-col pt-2 sm:px-8">
       <QuizHeader correctCount={correctCount} answeredCount={answeredCount} />
 
-      <div className="w-full grow space-y-4 overflow-y-scroll px-4 pt-6 pb-6 sm:px-2">
+      <div className="mt-4 flex w-full justify-center px-4 sm:px-2">
+        <QuizSourceTabs source={source} isLoading={isLoading} onSelect={selectSource} />
+      </div>
+
+      <div className="w-full grow space-y-4 overflow-y-scroll px-4 pt-5 pb-6 sm:px-2">
         {question ? (
           <QuizCard question={question} selected={selected} onSelect={select} />
         ) : (

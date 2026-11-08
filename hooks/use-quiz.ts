@@ -1,41 +1,83 @@
 "use client";
 
-import { getQuizQuestion } from "@/lib/neon/get-quiz-question";
-import { QuizQuestion } from "@/lib/types";
-import { useEffect, useRef, useState } from "react";
+import { getAiQuizQuestion, getQuizQuestion } from "@/lib/neon/get-quiz-question";
+import { QuizQuestion, QuizSource } from "@/lib/types";
+import { useCallback, useEffect, useRef, useState } from "react";
+
+const LOAD_QUESTION: Record<QuizSource, (excludeIds: string[]) => Promise<QuizQuestion | null>> = {
+  stored: getQuizQuestion,
+  ai: getAiQuizQuestion,
+};
 
 export function useQuiz() {
+  const [source, setSource] = useState<QuizSource>("stored");
   const [question, setQuestion] = useState<QuizQuestion | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
-  const [askedIds, setAskedIds] = useState<string[]>([]);
   const [answeredCount, setAnsweredCount] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const isLoadingRef = useRef(false);
+  const askedIdsRef = useRef<string[]>([]);
+  const prefetchedRef = useRef<QuizQuestion | null>(null);
+  const prefetchingRef = useRef<Promise<QuizQuestion | null> | null>(null);
+  const generationRef = useRef(0);
 
-  const loadQuestion = async (excludeIds: string[]) => {
+  const fetchQuestion = useCallback(
+    (nextSource: QuizSource) =>
+      LOAD_QUESTION[nextSource](askedIdsRef.current).then((next) => {
+        if (next) askedIdsRef.current = [...askedIdsRef.current, next.id];
+
+        return next;
+      }),
+    []
+  );
+
+  const prefetch = useCallback((nextSource: QuizSource) => {
+    if (prefetchedRef.current || prefetchingRef.current) return;
+
+    const generation = generationRef.current;
+    const pending = fetchQuestion(nextSource);
+    prefetchingRef.current = pending;
+
+    pending.then((next) => {
+      if (generation !== generationRef.current) return;
+
+      prefetchingRef.current = null;
+      prefetchedRef.current = next;
+    });
+  }, [fetchQuestion]);
+
+  const loadQuestion = useCallback(async (nextSource: QuizSource) => {
     if (isLoadingRef.current) return;
 
-    isLoadingRef.current = true;
-    setIsLoading(true);
+    const generation = generationRef.current;
+    const prefetched = prefetchedRef.current;
+    const pending = prefetched
+      ? Promise.resolve(prefetched)
+      : (prefetchingRef.current ?? fetchQuestion(nextSource));
 
-    const next = await getQuizQuestion(excludeIds);
+    prefetchedRef.current = null;
+    prefetchingRef.current = null;
+    isLoadingRef.current = true;
+    if (!prefetched) setIsLoading(true);
+
+    const next = await pending;
 
     isLoadingRef.current = false;
     setIsLoading(false);
 
-    if (!next) return;
+    if (generation !== generationRef.current || !next) return;
 
     setQuestion(next);
     setSelected(null);
-    setAskedIds([...excludeIds, next.id]);
-  };
+    prefetch(nextSource);
+  }, [fetchQuestion, prefetch]);
 
   useEffect(() => {
     if (question || isLoadingRef.current) return;
 
-    loadQuestion([]);
-  }, [question]);
+    loadQuestion(source);
+  }, [loadQuestion, question, source]);
 
   const select = (choice: string) => {
     if (!question || selected) return;
@@ -45,9 +87,19 @@ export function useQuiz() {
     if (choice === question.answer) setCorrectCount((prev) => prev + 1);
   };
 
-  const goNext = () => loadQuestion(askedIds);
+  const selectSource = (nextSource: QuizSource) => {
+    if (nextSource === source || isLoadingRef.current) return;
+
+    generationRef.current += 1;
+    prefetchedRef.current = null;
+    prefetchingRef.current = null;
+    setSource(nextSource);
+    setSelected(null);
+    setQuestion(null);
+  };
 
   return {
+    source,
     question,
     selected,
     isAnswered: selected !== null,
@@ -55,6 +107,7 @@ export function useQuiz() {
     answeredCount,
     correctCount,
     select,
-    goNext,
+    selectSource,
+    goNext: () => loadQuestion(source),
   };
 }

@@ -32,6 +32,8 @@ export type QuizChoice = {
   meanings: string;
 };
 
+export type QuizSource = "stored" | "ai";
+
 export type QuizQuestion = {
   id: string;
   sentence: string;
