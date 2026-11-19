@@ -7,6 +7,7 @@ import { useFlashWords } from "@/hooks/use-flash-words";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { recallStatusesState, selectedLevelsState, tagFiltersState } from "@/lib/jotai/random-word/state";
 import { useAtom } from "jotai";
+import { useState } from "react";
 
 type Props = {
   tagOptions: string[];
@@ -17,6 +18,7 @@ export default function FlashContainer({ tagOptions }: Props) {
   const [selectedLevels] = useAtom(selectedLevelsState);
   const [recallStatuses] = useAtom(recallStatusesState);
   const { isLoading } = useLocalStorage();
+  const [isAutoPlayEnabled, setIsAutoPlayEnabled] = useState(false);
 
   const { word, currentIndex, shownCount, intervalMs, isPlaying, setIntervalMs, togglePlaying, goNext } =
     useFlashWords({
@@ -31,14 +33,22 @@ export default function FlashContainer({ tagOptions }: Props) {
       <FlashHeader tagOptions={tagOptions} shownCount={shownCount} />
 
       <div className="flex w-full grow items-center justify-center px-4 py-6 sm:px-2">
-        <FlashCard word={word} intervalMs={intervalMs} isPlaying={isPlaying} flashKey={currentIndex} />
+        <FlashCard
+          word={word}
+          intervalMs={intervalMs}
+          isPlaying={isPlaying}
+          isAutoPlayEnabled={isAutoPlayEnabled}
+          flashKey={currentIndex}
+        />
       </div>
 
       <FlashControls
         intervalMs={intervalMs}
         isPlaying={isPlaying}
+        isAutoPlayEnabled={isAutoPlayEnabled}
         onChangeInterval={setIntervalMs}
         onTogglePlaying={togglePlaying}
+        onToggleAutoPlay={() => setIsAutoPlayEnabled((prev) => !prev)}
         onClickNext={goNext}
       />
     </div>

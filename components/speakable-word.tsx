@@ -1,5 +1,6 @@
 "use client";
 
+import { cancelSpeech, speak } from "@/lib/speech/speak";
 import { IconVolume } from "@tabler/icons-react";
 import React, { useEffect, useState } from "react";
 
@@ -9,22 +10,6 @@ function toSpeech(names: string) {
     .map((line) => line.trim())
     .filter(Boolean)
     .join(", ");
-}
-
-function speak(names: string, onStart: () => void, onEnd: () => void) {
-  if (!("speechSynthesis" in window)) return;
-
-  const synth = window.speechSynthesis;
-  synth.cancel();
-
-  const utterance = new SpeechSynthesisUtterance(toSpeech(names));
-  utterance.lang = "en-US";
-  utterance.rate = 0.95;
-  utterance.onstart = onStart;
-  utterance.onend = onEnd;
-  utterance.onerror = onEnd;
-
-  synth.speak(utterance);
 }
 
 type Props = {
@@ -37,27 +22,23 @@ export default function SpeakableWord({ names, isAutoPlayEnabled }: Props) {
   const [shouldAutoPlay] = useState(isAutoPlayEnabled);
 
   useEffect(() => {
-    return () => {
-      if ("speechSynthesis" in window) window.speechSynthesis.cancel();
-    };
+    return () => cancelSpeech();
   }, []);
 
   useEffect(() => {
     if (!shouldAutoPlay) return;
 
-    speak(
-      names,
-      () => setIsSpeaking(true),
-      () => setIsSpeaking(false)
-    );
+    speak(toSpeech(names), {
+      onStart: () => setIsSpeaking(true),
+      onEnd: () => setIsSpeaking(false),
+    });
   }, [shouldAutoPlay, names]);
 
   const onClick = () => {
-    speak(
-      names,
-      () => setIsSpeaking(true),
-      () => setIsSpeaking(false)
-    );
+    speak(toSpeech(names), {
+      onStart: () => setIsSpeaking(true),
+      onEnd: () => setIsSpeaking(false),
+    });
   };
 
   return (

@@ -2,23 +2,27 @@
 
 import { Button } from "@/components/ui/button";
 import { useDisplayMode } from "@/hooks/use-display-mode";
-import { IconPlayerPause, IconPlayerPlay } from "@tabler/icons-react";
+import { IconPlayerPause, IconPlayerPlay, IconVolume, IconVolumeOff } from "@tabler/icons-react";
 
 const INTERVAL_OPTIONS = [500, 1000, 1500, 2000, 3000, 5000];
 
 type Props = {
   intervalMs: number;
   isPlaying: boolean;
+  isAutoPlayEnabled: boolean;
   onChangeInterval: (next: number) => void;
   onTogglePlaying: () => void;
+  onToggleAutoPlay: () => void;
   onClickNext: () => void;
 };
 
 export default function FlashControls({
   intervalMs,
   isPlaying,
+  isAutoPlayEnabled,
   onChangeInterval,
   onTogglePlaying,
+  onToggleAutoPlay,
   onClickNext,
 }: Props) {
   const { isPwa } = useDisplayMode();
@@ -53,6 +57,20 @@ export default function FlashControls({
       </div>
 
       <div className="flex w-full gap-x-2 sm:w-auto">
+        <Button
+          variant="outline"
+          size="icon"
+          aria-label="Auto play"
+          aria-pressed={isAutoPlayEnabled}
+          onClick={onToggleAutoPlay}
+          className={`w-10 shrink-0 sm:w-10 ${
+            isAutoPlayEnabled
+              ? "border-gold-400/60 bg-gold-500/20 text-gold-200 hover:border-gold-300/70 hover:text-gold-100"
+              : ""
+          }`}
+        >
+          {isAutoPlayEnabled ? <IconVolume size={18} stroke={1.6} /> : <IconVolumeOff size={18} stroke={1.6} />}
+        </Button>
         <Button variant="outline" onClick={onClickNext} className="flex-1 sm:w-24 sm:flex-none">
           Skip
         </Button>
