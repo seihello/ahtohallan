@@ -22,8 +22,7 @@ function richText(property) {
   if (property?.type !== "rich_text") return "";
   return property.rich_text
     .map((item) => item.plain_text)
-    .filter(Boolean)
-    .join("\n")
+    .join("")
     .trim();
 }
 
