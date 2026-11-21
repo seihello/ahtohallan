@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "sync:words": "node scripts/import-words-from-notion.mjs"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^1.2.12",
