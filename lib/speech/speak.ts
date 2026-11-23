@@ -5,6 +5,7 @@ type Handlers = {
 
 const RESTART_DELAY_MS = 80;
 const START_TIMEOUT_MS = 600;
+const MAX_UTTERANCE_MS = 10000;
 
 let generation = 0;
 let activeUtterance: SpeechSynthesisUtterance | null = null;
@@ -25,6 +26,15 @@ function enqueue(text: string, handlers: Handlers, requestGeneration: number, ca
   utterance.rate = 0.95;
 
   let hasStarted = false;
+  let deadlineTimer: number | null = null;
+
+  const release = () => {
+    if (deadlineTimer !== null) window.clearTimeout(deadlineTimer);
+    if (activeUtterance === utterance) activeUtterance = null;
+    if (requestGeneration !== generation) return;
+    clearTimers();
+    handlers.onEnd?.();
+  };
 
   utterance.onstart = () => {
     hasStarted = true;
@@ -32,21 +42,13 @@ function enqueue(text: string, handlers: Handlers, requestGeneration: number, ca
     clearTimers();
     handlers.onStart?.();
   };
-  utterance.onend = () => {
-    if (activeUtterance === utterance) activeUtterance = null;
-    if (requestGeneration !== generation) return;
-    clearTimers();
-    handlers.onEnd?.();
-  };
-  utterance.onerror = () => {
-    if (activeUtterance === utterance) activeUtterance = null;
-    if (requestGeneration !== generation) return;
-    clearTimers();
-    handlers.onEnd?.();
-  };
+  utterance.onend = release;
+  utterance.onerror = release;
 
   activeUtterance = utterance;
   synth.speak(utterance);
+
+  deadlineTimer = window.setTimeout(release, MAX_UTTERANCE_MS);
 
   if (!canRetry) return;
 
@@ -58,15 +60,13 @@ function enqueue(text: string, handlers: Handlers, requestGeneration: number, ca
   }, START_TIMEOUT_MS);
 }
 
-export function speak(text: string, handlers: Handlers = {}) {
-  if (!("speechSynthesis" in window)) return;
-
+function start(text: string, handlers: Handlers, shouldInterrupt: boolean) {
   const synth = window.speechSynthesis;
   generation += 1;
   const requestGeneration = generation;
   clearTimers();
 
-  if (!synth.speaking && !synth.pending && !synth.paused) {
+  if (!shouldInterrupt || (!synth.speaking && !synth.pending && !synth.paused)) {
     enqueue(text, handlers, requestGeneration, true);
     return;
   }
@@ -79,6 +79,20 @@ export function speak(text: string, handlers: Handlers = {}) {
     restartTimer = null;
     enqueue(text, handlers, requestGeneration, true);
   }, RESTART_DELAY_MS);
+}
+
+export function speak(text: string, handlers: Handlers = {}) {
+  if (!("speechSynthesis" in window)) return;
+
+  start(text, handlers, true);
+}
+
+export function speakWhenIdle(text: string, handlers: Handlers = {}) {
+  if (!("speechSynthesis" in window)) return false;
+  if (activeUtterance !== null) return false;
+
+  start(text, handlers, false);
+  return true;
 }
 
 export function cancelSpeech() {

@@ -1,6 +1,6 @@
 "use client";
 
-import { cancelSpeech, speak } from "@/lib/speech/speak";
+import { cancelSpeech, speakWhenIdle } from "@/lib/speech/speak";
 import { Word } from "@/lib/types";
 import { useEffect, useRef, useState } from "react";
 
@@ -37,7 +37,7 @@ export default function FlashCard({ word, intervalMs, isPlaying, isAutoPlayEnabl
 
     if (isFirstWordAfterEnabled) return;
 
-    speak(toHeadword(word.names), {
+    speakWhenIdle(toHeadword(word.names), {
       onStart: () => setIsSpeaking(true),
       onEnd: () => setIsSpeaking(false),
     });
