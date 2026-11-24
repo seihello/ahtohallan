@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>英検熟語のコアイメージ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE everyday study: calm, dense, easy to scan
+   IDEA a vocabulary notebook index: ruled rows, the base word marked with a highlighter
+   PICTURE the ruled table itself, with a letter index and search above it
+   COLOUR white paper, ink, royal-blue cover band, highlighter yellow on base words
+   TYPE Schibsted Grotesk for English phrases, Zen Kaku Gothic New for Japanese
+   LAYOUT title band, then sticky search + A–Z index, then the full-width table; phone: rows stack */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#121417);--ink:light-dark(#15171c,#e9eaee);--mute:light-dark(#5b6170,#a3a8b4);--rule:light-dark(#e3e5ea,#2a2e36);--cover:light-dark(#1f45b5,#1a2f6e);--onc:#ffffff;--mark:light-dark(#ffe45c,#6b5a00);--panel:light-dark(#f4f6fb,#191c22);--accent:light-dark(#1f45b5,#8fb0ff);--mud:light-dark(#8b5e34,#b08257);--water:light-dark(#3b82f6,#60a5fa);--flame:#f59e0b;--soft:light-dark(#dfe7fb,#24345f)}
+.ic{display:block;width:64px;height:64px;margin:8px 0 0;stroke-linecap:round;stroke-linejoin:round}
+:root[data-theme=light]{color-scheme:light}
+:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{scroll-padding-top:120px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP",sans-serif;overflow-x:clip}
+.band{padding-block:clamp(24px,3.5vw,52px);padding-left:max(4vw,16px);padding-right:max(4vw,16px)}
+.cover{background:var(--cover);color:var(--onc)}
+.wrap{max-width:1400px;margin:0 auto}
+h1{font:700 clamp(30px,4.4vw,48px)/1.1 "Zen Kaku Gothic New",sans-serif;letter-spacing:-.02em;margin:0 0 10px;text-wrap:balance}
+.lead{margin:0;max-width:62ch;opacity:.92}
+.stats{display:flex;flex-wrap:wrap;gap:8px 28px;margin-top:18px;font-size:15px}
+.stats b{font:700 26px/1 "Schibsted Grotesk",sans-serif;margin-right:6px}
+.tools{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 94%,transparent);backdrop-filter:blur(6px);border-bottom:1px solid var(--rule);padding:12px max(4vw,16px)}
+.tools .wrap{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+#q{flex:1 1 260px;font:16px "Zen Kaku Gothic New",sans-serif;padding:10px 14px;min-height:44px;border:1.5px solid var(--rule);border-radius:10px;background:var(--panel);color:var(--ink)}
+#q:focus{outline:2px solid var(--accent);outline-offset:1px}
+#count{font-size:14px;color:var(--mute);white-space:nowrap}
+.az{display:flex;flex-wrap:wrap;gap:4px}
+.az a{display:inline-grid;place-items:center;min-width:32px;height:32px;padding:0 6px;border-radius:8px;font:600 14px "Schibsted Grotesk",sans-serif;color:var(--accent);text-decoration:none;background:var(--panel)}
+.az a:hover,.az a:focus-visible{background:var(--accent);color:var(--bg);outline:none}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+col.c1{width:17%}col.c2{width:22%}col.c3{width:23%}col.c4{width:38%}
+th{text-align:left;font-size:13px;font-weight:700;color:var(--mute);padding:10px 12px;border-bottom:2px solid var(--ink)}
+td{padding:12px;border-bottom:1px solid var(--rule);vertical-align:top;overflow-wrap:anywhere}
+tr.letter td{padding:22px 12px 6px;border-bottom:2px solid var(--accent);font:700 22px/1 "Schibsted Grotesk",sans-serif;color:var(--accent)}
+td.ph{font:700 17px/1.35 "Schibsted Grotesk",sans-serif}
+td.ph mark{background:linear-gradient(transparent 55%,var(--mark) 55%);color:inherit;padding:0 1px}
+td.core{color:var(--ink)}
+td.how{color:var(--ink)}
+.tag{display:inline-block;font-size:12px;line-height:1;padding:3px 6px;margin-left:6px;border-radius:5px;background:var(--panel);color:var(--mute);vertical-align:2px;white-space:nowrap}
+tbody tr:hover td{background:color-mix(in srgb,var(--panel) 70%,transparent)}
+tr.letter:hover td{background:none}
+.empty{padding:40px 12px;color:var(--mute);text-align:center}
+.notes{font-size:14px;color:var(--mute);border-top:1px solid var(--rule)}
+.notes ul{margin:8px 0 0;padding-left:1.2em}
+.notes li{margin:4px 0}
+@media(max-width:700px){
+  table{font-size:14px}
+  colgroup{display:none}
+  thead{display:none}
+  table,tbody{display:block}
+  tbody tr{display:grid;padding:12px 0;border-bottom:1px solid var(--rule)}
+  tbody td{display:block;border:0;padding:3px 4px}
+  tbody td::before{content:attr(data-l);display:block;font-size:12px;color:var(--mute);margin-top:4px}
+  td.ph::before{display:none}
+  tr.letter{border-bottom:2px solid var(--accent)!important;padding:18px 0 4px!important}
+  tr.letter td{border:0;padding:0 4px}
+  tr.letter td::before{display:none}
+}
+</style>
+</head>
+<body>
+<header class="cover band">
+  <div class="wrap">
+    <h1>英検熟語を、基幹の単語のコアイメージで覚える</h1>
+    <p class="lead">Notion の Words で「英検」と「熟語」の両方のタグが付いた熟語のうち、これまでの表で扱った単語を含むものをまとめました。意味は Notion の Meanings 欄の内容です。</p>
+    <div class="stats"><span><b id="total">0</b>熟語</span><span><b id="bases">0</b>基幹の単語</span></div>
+  </div>
+</header>
+<div class="tools">
+  <div class="wrap">
+    <input id="q" type="search" placeholder="熟語・意味・覚え方で検索" aria-label="検索">
+    <span id="count"></span>
+    <nav class="az" id="az" aria-label="頭文字"></nav>
+  </div>
+</div>
+<main class="band" style="padding-top:8px">
+  <div class="wrap scroll">
+    <table>
+      <colgroup><col class="c1"><col class="c2"><col class="c3"><col class="c4"></colgroup>
+      <thead><tr><th>熟語の名前</th><th>意味</th><th>基幹の単語のコアイメージ</th><th>覚え方</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+</main>
+<footer class="band notes">
+  <div class="wrap">
+    <strong>注</strong>
+    <ul>
+      <li>コアイメージと覚え方は、意味を覚えるための目安です。語源に基づいて厳密に確かめたものではありません。特に「記憶用」の印が付いたものは、語源とは関係なく覚えやすさを優先しています。</li>
+      <li>「別語源」の印は、その熟語で使われている意味の単語が、同じ綴りの別の語とは語源が違うことを示します。</li>
+      <li>Notion の「shack off」（振り払う）は、意味から shake off の誤記と思われるため、この表には入れていません。</li>
+    </ul>
+  </div>
+</footer>
+<script>
+{
+const D=[
+["bail out","bail","救済する、保釈する","中から外へ出す","窮地や牢屋の中から外（out）へ出してあげる","記憶用"],
+["balk (at)","balk","躊躇する、ためらう、ボーク","立ち止まって進まない","馬が障害の前でぴたっと止まる → 〜を前に（at）尻込みする",""],
+["bawl out","bawl","ひどく叱る、怒鳴りつける","大声を張り上げる","大声を相手に向けて出し切る（out）→ 怒鳴りつける",""],
+["bear down on","bear","迫ってくる","重さを担って支える","重さをかけて上から（down）相手に（on）のしかかってくる",""],
+["bear out","bear","実証する、裏付ける","重さを担って支える","主張の重さを最後まで（out）支えきる → 裏付ける",""],
+["belt out","belt","大声で歌う、大音量で演奏する","帯 → 帯で打つ・強く叩く","強く叩きつけるように声を外へ（out）放つ",""],
+["blare out","blare","鳴り響く、がなり立てる","耳障りな大音量","大音量が外へ（out）あふれ出す",""],
+["blot out","blot","完全に覆い隠す","しみ","しみで塗りつぶして見えなく（out）する",""],
+["blurt out","blurt","思わず口に出す","思わず口から飛び出す","言葉がポロッと外へ（out）飛び出す",""],
+["bog down","bog","動きを取れなくする、動きが取れなくなる","ぬかるみにはまって動けない","沼（bog）に下へ（down）ずぶずぶ沈んで動けない",""],
+["boot out","boot","追い出す、追い払う","ブーツ → ブーツで蹴る","ブーツで蹴って外へ（out）出す",""],
+["boot up","boot","（コンピューターを）起動する","ブーツ → ブーツで蹴る","ブーツのつまみ（bootstrap）を引いて自力で立ち上がる（up）→ 起動",""],
+["breeze in","breeze","ふらっとやって来る","軽やかに吹き抜ける風","そよ風のように軽やかに中へ（in）入ってくる",""],
+["brim over","brim","あふれる","縁ぎりぎりまでいっぱい","縁（brim）を越えて（over）こぼれる",""],
+["bubble over","bubble","興奮する、はしゃぐ","中から湧き上がる泡","泡が鍋の縁を越えて（over）あふれる → 気持ちがあふれる",""],
+["bundle up","bundle","暖かく着込む","ひとまとめにしたもの","自分を服で束ねてすっかり（up）包む",""],
+["butt in","butt","口を挟む、干渉する","頭や角で突く","会話の中へ（in）頭を突っ込む","別語源"],
+["cater to","cater","満たす、応える","必要なものを用意して提供する","相手（to）が必要とするものを用意する",""],
+["chime in","chime","議論に加わる、話に割って入る","澄んだ鐘の音","会話の中に（in）チャイムのように声を鳴らして入る",""],
+["churn out","churn","乱造する、大量に作り出す","激しくかき回す","機械をぐるぐる回して次々と外へ（out）出す",""],
+["claw back","claw","取り戻す","曲がった鋭い爪","爪で引っかけて手元へ（back）引き戻す",""],
+["clog up","clog","動きを妨害する、渋滞させる","流れや動きを塞ぐ","すっかり（up）詰まって流れない",""],
+["crack up","crack","大笑いさせる（する）、大破させる（する）","パキッと割れる","こらえきれず完全に（up）割れる → 吹き出す・壊れる",""],
+["crank out","crank","次々に生み出す、量産する","曲がった柄をぐるぐる回す","ハンドルを回すたびに製品が外へ（out）出てくる",""],
+["creep in","creep","忍び寄る、入り込む","そっと、じわじわ進む","気づかれないようにじわじわ中へ（in）入る",""],
+["crouch down","crouch","かがむ","身を低く縮める","下へ（down）身を縮める",""],
+["dabble in","dabble","ちょっと手を出す、かじる","ちょっとだけ浅く手を突っ込む","水に指先だけ浸すように、分野の中に（in）少し手を入れる",""],
+["deck out","deck","着飾らせる、飾り立てる","平らな板・覆い","外側（out）を飾りですっかり覆う",""],
+["dip into","dip","（貯金などに）手をつける、切り崩す","ちょっと沈んで、また上がる","貯金の中へ（into）手をちょっと浸して取り出す",""],
+["dish out","dish","罰を与える、忠告・批判をする、（よく考えずに）配る","皿 → 皿に盛って出す","料理を皿に盛って配るように、言葉や罰を外へ（out）配る",""],
+["dispense with","dispense","〜なしで済ます、省く","量って分け与える","〜を（with）配り切って手元から手放す → なしで済ます","記憶用"],
+["dole out","dole","分け与える、配る","分け前を配る","分け前を外へ（out）少しずつ配る",""],
+["dote on","dote","溺愛する、ぞっこんである","夢中になって甘やかす","相手に（on）べったり夢中になる",""],
+["drift off","drift","居眠りする","流れに任せてゆっくり流される","意識がふわふわと流されて離れていく（off）",""],
+["drone on","drone","だらだらと話す","単調な低い音が続く","ブーンという単調な声がずっと続く（on）",""],
+["drown out","drown","（音などを）かき消す","水中に沈めて覆い尽くす","大きな音で小さな音を沈めて消す（out）",""],
+["drum up","drum","（事業を）起こす、（支持を）獲得する","トントン繰り返し叩く","太鼓を叩いて人を集め、盛り上げる（up）",""],
+["duck out","duck","こっそり抜け出す、（責任から）逃れる","ひょいと頭を下げる","頭をひょいと下げて外へ（out）抜け出す",""],
+["dumb down","dumb","簡単にする","頭を使わない","頭を使わなくても分かるレベルまで下げる（down）",""],
+["dwell on","dwell","あれこれ考える、こだわる","一か所にとどまる","1つのことの上に（on）ずっと住みつく",""],
+["egg on","egg","けしかける、そそのかす","とがったものでつつく","後ろからつついて前へ（on）進ませる。卵ではなく、edge（刃）と同系の古ノルド語から","別語源"],
+["eke out","eke","（生計などを）立てる、（お金・食料・燃料などを）持たせる","少しずつ足して、なんとか増やす","少しずつ足して最後まで（out）もたせる",""],
+["fan out","fan","四方に散らばる、展開する","扇形に広げる","扇を開くように外へ（out）広がる",""],
+["fawn over","fawn","こびる、へつらう","こびて機嫌をとる","犬が尻尾を振って相手の周りに（over）まとわりつく","別語源"],
+["fend for oneself","fend","自力で生きて行く","寄せつけない（defend の短縮）","自分のために（for oneself）自分で身を守る",""],
+["fend off","fend","かわす、受け流す","寄せつけない","攻撃を払いのけて離す（off）",""],
+["fizzle out","fizzle","途中でだめになる、たち消える","勢いがシューッと消える","花火がシューッと鳴って消える（out）",""],
+["flip out","flip","激怒する、大喜びする、興奮する","ぱっとひっくり返す","感情がひっくり返って外へ（out）飛び出す",""],
+["flunk out","flunk","（成績不良で）退学する","試験に落ちる","落第して学校の外へ（out）",""],
+["fork out","fork","大金を渋々払う","二股に分かれる","フォークですくってお金を外へ（out）差し出す","記憶用"],
+["foul up","foul","台無しにする、駄目にする","汚す・ルールを汚す","すっかり（up）汚して台無しにする",""],
+["front for","front","隠れ蓑になる","前面","〜のために（for）前に立って表の顔になる",""],
+["frown on","frown","批判する、難色を示す、認めない","眉間にしわを寄せる","〜に（on）向かって眉をひそめる",""],
+["fuss over","fuss","ちやほやする、こだわる、騒ぎ立てる","小さなことで大騒ぎする","相手の周りで（over）あれこれ騒ぎ立てる",""],
+["gloss over","gloss","取り繕う、ごまかす","表面のつや","上から（over）つやを塗って傷を隠す",""],
+["goof off","goof","時間を浪費する、サボる","ドジ、おふざけ","ふざけて仕事から離れる（off）",""],
+["grate on","grate","苛立たせる、不快にさせる","ガリガリこする（すりおろす）","神経に（on）おろし金をこすりつける","別語源"],
+["hail from","hail","出身である","呼び止める・挨拶する","「〜から（from）来ました」と挨拶する","記憶用"],
+["hammer out","hammer","案出する、打ち出す","ガンガン叩く","何度も叩いて形を打ち出す（out）",""],
+["harp on","harp","くどくど言う","同じ弦を何度も弾く","ハープの同じ弦をずっと（on）弾き続ける","記憶用"],
+["haul off","haul","連れて行く","重いものをぐいぐい引っぱる","引きずって離れたところへ（off）連れて行く",""],
+["hem in","hem","取り囲む","縁で囲む","服のすそ（hem）で縁取るように、中に（in）閉じ込める",""],
+["hike up","hike","（価格などを）引き上げる","ぐいっと上げる","ぐいっと上へ（up）",""],
+["hinge on","hinge","次第である","蝶番 → それを軸に全体が動く","ドアが蝶番の上で（on）回るように、結果がそれにかかっている",""],
+["hunker down","hunker","避難する、しゃがむ","身を低くして構える","身を低く（down）して嵐をやり過ごす",""],
+["jot down","jot","書き留める","ちょこっと、ほんの少し","ちょこっと紙に書き下ろす（down）",""],
+["keel over","keel","倒れる、卒倒する","船底の背骨（竜骨）","船がひっくり返って（over）竜骨が上を向く",""],
+["lash out","lash","痛烈に批判する","鞭でビシッと打つ","鞭を外へ（out）振り出すように攻撃する",""],
+["leaf through","leaf","素早くパラパラめくる","葉 → 薄い1枚","1枚1枚の葉（ページ）を通り抜ける（through）",""],
+["level at[against]","level","（非難や批判を）向ける","平ら、同じ高さ","銃を水平に構えて〜に（at）向ける",""],
+["level off","level","成長が止まる、伸びが弱まる、水平飛行に移る","平ら、同じ高さ","上り坂が平らになり、上昇から離れる（off）",""],
+["level with","level","正直に話す、包み隠さず話す","平ら、同じ高さ","相手と（with）同じ目線に立って隠さず話す",""],
+["limber up","limber","ウォーミングアップをする","しなやか","体をしなやかに整え上げる（up）",""],
+["lop off","lop","削減する、切り落とす","バッサリ切り落とす","バッサリ切って離す（off）",""],
+["louse up","louse","だめにする、台無しにする","シラミ → 嫌なもの","シラミだらけにして、すっかり（up）台無しにする",""],
+["mete out","mete","（罰などを）与える","量って割り当てる","量った分を外へ（out）配る。mete は「量る」という意味の古い語",""],
+["muddle through","muddle","どうにか切り抜ける","泥水のように濁らせる","ごちゃごちゃのまま最後まで通り抜ける（through）",""],
+["mull over","mull","じっくり考える","頭の中でゆっくりかき回す","考えを何度もひっくり返す（over）",""],
+["nibble (at) / nibble away (at)","nibble","少しずつかじる、切り崩す","ちょこちょこ小さくかじる","〜を（at）少しずつかじり取っていく（away）",""],
+["pack off","pack","送り出す、追いやる","ぎゅっと詰める","荷物を詰めて離れた所へ（off）送り出す",""],
+["patch up","patch","（関係などを）修復する、解決する","穴をふさぐ小さな布切れ","継ぎを当ててすっかり（up）直す",""],
+["perk up","perk","元気づける、魅力的にする","ぴんと元気になる","耳がぴんと上がる（up）","別語源"],
+["peter out","peter","次第に減少してなくなる","少しずつ消えていく","細い流れが少しずつ細って、最後に消える（out）",""],
+["pile in","pile","どやどやと中に入る、急いで乗り込む","積み重ねた山","人の山が中へ（in）どっとなだれ込む",""],
+["pin down","pin","知る、突き止める、（人を）組み伏せる","一点に留めて動けなくする","ピンで下に（down）留めて動かないようにする",""],
+["pitch in","pitch","協力する、援助する","狙ってぐっと投げ込む","自分の力を輪の中に（in）投げ入れる",""],
+["pluck up","pluck","奮い起こす","つまんでぐいっと引き抜く","勇気（pluck）を奥から引き上げる（up）",""],
+["pore over","pore","じっくり読む、眺める","目をこらす","本の上に（over）かがみこんで目をこらす","別語源"],
+["rack up","rack","（利益や損失を）重ねる、（得点を）獲得する","棚","得点を棚に積み上げていく（up）","記憶用"],
+["rail against","rail","激しく非難する","ののしる","〜に対して（against）ののしる","別語源"],
+["ramp up","ramp","増やす","坂を上るように段階的に上げる","スロープを上へ（up）",""],
+["rattle off","rattle","スラスラと言う、そらんじる","ガタガタ揺れて音を立てる","ガタガタと勢いよく言葉を次々に打ち出す（off）",""],
+["rig up","rig","急ごしらえする","装置を取り付ける","ありあわせの装置を組み上げる（up）",""],
+["rip off","rip","騙して売りつける、ぼったくる、はぎ取る","ビリッと勢いよく裂く","引き裂いてはぎ取る（off）→ お金をむしり取る",""],
+["rip through","rip","勢いよく通り過ぎる","ビリッと勢いよく裂く","引き裂きながら突き抜ける（through）",""],
+["saddle A with B","saddle","AにBを負わせる","鞍 → 背中に重荷を乗せる","Aの背中に鞍を置いて、Bを（with）載せる",""],
+["sail through","sail","楽に乗り切る","帆に風を受けてすいすい進む","順風満帆で最後まで通り抜ける（through）",""],
+["scoot over","scoot","少し詰める","さっと滑るように動く","座ったまま横へ（over）すっと滑る",""],
+["scrape by","scrape","かろうじて生計を立てる","ガリガリこする","壁にこすりながら、ぎりぎり通り過ぎる（by）",""],
+["scrape together","scrape","かき集める","ガリガリこする","底をこそげて寄せ集める（together）",""],
+["scrimp on","scrimp","節約する、倹約する","ぎりぎりまで切り詰める","〜の分（on）を切り詰める",""],
+["settle for","settle","〜で我慢しておく、手を打つ","落ち着くところに落ち着く","〜で（for）手を打って落ち着く",""],
+["settle on","settle","〜を決める、〜に決める","落ち着くところに落ち着く","選択肢の上に（on）腰を落ち着ける",""],
+["settle up","settle","精算する、勘定を払う","落ち着くところに落ち着く（決着）","勘定をすっかり（up）片づけて決着させる",""],
+["shell out","shell","大金を渋々払う","殻（から中身を出す）","殻から豆を出すように、財布からお金を外へ（out）",""],
+["shoot for","shoot","目指す、狙う","勢いよく放つ","〜に向けて（for）狙って撃つ",""],
+["shove around","shove","こき使う","ぐいっと乱暴に押す","あちこち（around）乱暴に押しまわす",""],
+["shove off","shove","離れる、出ていく、船を押し出す","ぐいっと乱暴に押す","岸を押して船を離す（off）",""],
+["shrivel up","shrivel","しなびる、しわが寄る","乾いて縮む","すっかり（up）縮む",""],
+["shrug off","shrug","無視する、受け流す","肩をすくめる → 気にしない","肩をすくめて払い落とす（off）",""],
+["sift through","sift","詳しく調べる","ふるいにかけてより分ける","山全体をふるいに通す（through）",""],
+["simmer down","simmer","落ち着く、静まる","弱火でぐつぐつ煮える","沸騰から弱火へ火を下げる（down）",""],
+["siphon off","siphon","（利益などを）吸い上げる、横領（流用）する","管で吸い出す","管でこっそり吸い出して別の所へ（off）",""],
+["skirt around","skirt","避ける、周辺に位置する","端・周りをかすめる","問題の周りを（around）回ってかすめる",""],
+["smack of","smack","（良くないことが）感じられる","味、風味","〜の（of）味がする → 〜の気配がする","別語源"],
+["snap out of","snap","立ち直る、気を取り直す","パチンと素早く","指をパチンと鳴らして、気分から抜け出す（out of）",""],
+["snap up","snap","急いで買う","パチンと素早く","パクッと食いついて取り上げる（up）",""],
+["snuff out","snuff","終わらせる、絶つ","芯をつまんで火を消す","ろうそくの火を完全に（out）消す","別語源"],
+["sponge off","sponge","たかる、せびる","吸い取る","他人から（off）スポンジのように吸い取る",""],
+["spout off","spout","ペラペラ喋る","勢いよく噴き出す","口から言葉が噴き出して止まらない",""],
+["spruce up","spruce","小ぎれいにする、身なりを整える","こぎれいな","身なりをきちんと整え上げる（up）","記憶用"],
+["spur on","spur","奮起させる、駆り立てる","拍車で馬を駆り立てる","拍車を入れて前へ（on）進ませる",""],
+["squeak by","squeak","かろうじて成功する","キーッと高い音","きしむ音を立てながら、ぎりぎり通り過ぎる（by）",""],
+["stake out","stake","見張る","杭を打って自分のものと示す","杭を打って範囲を区切り、そこで張り込む",""],
+["stave off","stave","食い止める、遅らせる","棒で追い払う","棒（stave）で払って遠ざける（off）",""],
+["stem from","stem","〜に由来する","茎","茎が根から（from）伸びる","別語源"],
+["stow away","stow","密航する","決まった場所にきちんとしまい込む","荷物のように隠れて、しまい込まれる（away）",""],
+["strike down","strike","無効とする、撤廃する、（病気が）襲う","一撃を加える","一撃で打ち倒す（down）",""],
+["strike off","strike","（リストから）消す、除名する","一撃を加える","線を一本引いて名簿から外す（off）",""],
+["strike on","strike","思いつく、発見する","一撃を加える","ある考えにパッと当たる（on）",""],
+["strike up","strike","始める","一撃を加える","楽団が一打ちで演奏を始める（up）",""],
+["suck up to","suck","媚びる、おべっかを言う","吸い込む","相手に（to）吸い付くように近づく",""],
+["tack on","tack","つけ足す","軽く留めて付け足す","鋲でちょこっと留めて付け加える（on）",""],
+["tamper with","tamper","勝手にいじる、手を加える","余計な手を加える","〜に（with）余計な手を出す",""],
+["tap into","tap","開拓する、活用する","栓を開けて中身を引き出す","樽に栓を差し込んで（into）中身を引き出す","別語源"],
+["taper off","taper","次第に減る、徐々に弱まる","先へ行くほど細くなる","ろうそくの先のように細くなって消えていく（off）",""],
+["tide over","tide","困難な時期を凌がせる","潮の流れに乗せて次まで運ぶ","満潮に乗って浅瀬を越える（over）",""],
+["tip off","tip","内報する、こっそり知らせる","助言、ヒント","こっそりヒントを渡す","記憶用"],
+["trail off","trail","次第に小さくなる、消える","後ろに長く引きずる","声が尾を引いて消えていく（off）",""],
+["trump up","trump","捏造する、でっち上げる","だます","だましの話を作り上げる（up）","別語源"],
+["vouch for","vouch","保証する、請け合う","保証人として名乗り出る","〜のために（for）保証人として名乗り出る",""],
+["wade / wade through","wade","歩く、歩いて渡る／苦労して読む","水の抵抗を受けながら進む","水の中を最後まで（through）歩き抜ける",""],
+["whip up","whip","（食事などを）手早く用意する、（感情などを）掻き立てる、（ほこりやしぶきを）舞い上げる","ビュッと素早く動かす","泡立て器でさっと泡立てて仕上げる（up）",""],
+["whisk away","whisk","さっと連れ去る、持ち去る","サッと素早く動かす","サッと払うように遠くへ（away）",""],
+["wind down","wind","徐々に終わる、徐々に終わらせる","ぐるぐる巻く","巻いたねじ巻き時計が、ゆっくり止まっていく（down）",""],
+["wind up","wind","終わる、終える、〜することになる","ぐるぐる巻く","糸を最後まで巻き上げる（up）→ 終わる",""],
+["wriggle out of","wriggle","上手く逃れる","くねくね身をよじる","体をくねらせて隙間から抜け出す（out of）",""]
+];
+const A="var(--accent)",I="var(--ink)";
+const IC={
+bog:`<rect x="27" y="6" width="11" height="34" rx="5" fill="var(--soft)" stroke="${I}" stroke-width="2"/><path d="M22 6h21" stroke="${I}" stroke-width="2"/><path d="M2 40 Q16 33 32 38 T62 38 V62 H2Z" fill="var(--mud)"/><path d="M2 40 Q16 33 32 38 T62 38" fill="none" stroke="${I}" stroke-width="2"/><circle cx="14" cy="49" r="2.5" fill="var(--bg)" opacity=".7"/><circle cx="48" cy="52" r="3" fill="var(--bg)" opacity=".7"/><circle cx="40" cy="46" r="1.8" fill="var(--bg)" opacity=".7"/><path d="M47 18v12m-4-4 4 4 4-4" fill="none" stroke="${A}" stroke-width="2.5"/>`,
+brim:`<path d="M14 18 Q32 9 50 18 L45 58 H19 Z" fill="var(--water)" opacity=".85"/><path d="M14 18 L19 58 H45 L50 18" fill="none" stroke="${I}" stroke-width="2.5"/><path d="M11 18h42" stroke="${I}" stroke-width="2.5"/><path d="M50 18 q5 4 3 12" fill="none" stroke="var(--water)" stroke-width="3"/><circle cx="53" cy="36" r="2.2" fill="var(--water)"/>`,
+claw:`<rect x="4" y="50" width="56" height="10" rx="5" fill="var(--mud)"/><path d="M6 52 C6 30 16 14 30 12 C22 20 18 34 18 52Z" fill="var(--soft)" stroke="${I}" stroke-width="2"/><path d="M22 52 C22 32 32 18 46 16 C38 24 34 36 34 52Z" fill="var(--soft)" stroke="${I}" stroke-width="2"/><path d="M38 52 C38 36 48 24 60 24 C53 30 50 40 50 52Z" fill="var(--soft)" stroke="${I}" stroke-width="2"/><path d="M30 12l-5 3M46 16l-5 3M60 24l-5 2" stroke="${A}" stroke-width="3"/>`,
+hinge:`<rect x="6" y="14" width="22" height="36" rx="2" fill="var(--soft)" stroke="${I}" stroke-width="2"/><rect x="36" y="14" width="22" height="36" rx="2" fill="var(--soft)" stroke="${I}" stroke-width="2"/><rect x="27" y="8" width="10" height="48" rx="5" fill="${A}"/><path d="M32 8v48" stroke="var(--bg)" stroke-width="1.5"/><circle cx="16" cy="24" r="2" fill="${I}"/><circle cx="16" cy="40" r="2" fill="${I}"/><circle cx="48" cy="24" r="2" fill="${I}"/><circle cx="48" cy="40" r="2" fill="${I}"/>`,
+keel:`<path d="M4 36 H60 L50 24 H14Z" fill="var(--soft)" stroke="${I}" stroke-width="2.5"/><path d="M32 24V12" stroke="${A}" stroke-width="5"/><path d="M10 18 A22 22 0 0 1 22 6" fill="none" stroke="var(--mute)" stroke-width="2"/><path d="M22 6l-6 0m6 0-1 6" fill="none" stroke="var(--mute)" stroke-width="2"/><path d="M2 44 q7 -5 14 0 t14 0 t14 0 t14 0 t8 0" fill="none" stroke="var(--water)" stroke-width="3"/><path d="M2 54 q7 -5 14 0 t14 0 t14 0 t14 0 t8 0" fill="none" stroke="var(--water)" stroke-width="3" opacity=".6"/>`,
+sift:`<path d="M6 20 H58 L50 34 H14Z" fill="var(--soft)" stroke="${I}" stroke-width="2.5"/><path d="M14 34 H50" stroke="${I}" stroke-width="2.5" stroke-dasharray="2 3"/><circle cx="24" cy="15" r="4" fill="var(--mud)"/><circle cx="34" cy="13" r="5" fill="var(--mud)"/><circle cx="43" cy="16" r="3.5" fill="var(--mud)"/><g fill="${A}"><circle cx="20" cy="42" r="1.6"/><circle cx="30" cy="46" r="1.6"/><circle cx="40" cy="41" r="1.6"/><circle cx="25" cy="53" r="1.6"/><circle cx="36" cy="56" r="1.6"/><circle cx="45" cy="50" r="1.6"/></g>`,
+snuff:`<rect x="22" y="34" width="14" height="26" rx="2" fill="var(--soft)" stroke="${I}" stroke-width="2"/><path d="M29 34v-5" stroke="${I}" stroke-width="2"/><path d="M18 30 L29 12 L40 30Z" fill="${A}"/><path d="M40 24 L60 14" stroke="${A}" stroke-width="3"/><path d="M27 10 q-4 -4 0 -8" fill="none" stroke="var(--mute)" stroke-width="2"/>`,
+taper:`<path d="M4 26 L60 32 L4 38Z" fill="var(--soft)" stroke="${I}" stroke-width="2.5"/><path d="M4 26 V38" stroke="${A}" stroke-width="5"/><path d="M20 48 H52 m-6 -5 6 5 -6 5" fill="none" stroke="${A}" stroke-width="2.5"/>`,
+tide:`<path d="M2 42 q8 -6 16 0 t16 0 t16 0 t14 0 V62 H2Z" fill="var(--water)" opacity=".8"/><path d="M14 40 L22 30 H42 L50 40Z" fill="var(--soft)" stroke="${I}" stroke-width="2"/><path d="M32 30V12 l10 12H32" fill="${A}" stroke="${I}" stroke-width="1.5"/><path d="M8 58 V48 l-3 4 m3 -4 3 4" fill="none" stroke="var(--bg)" stroke-width="2"/><path d="M56 58 V48 l-3 4 m3 -4 3 4" fill="none" stroke="var(--bg)" stroke-width="2"/>`,
+wind:`<rect x="10" y="12" width="26" height="6" rx="2" fill="${I}"/><rect x="10" y="46" width="26" height="6" rx="2" fill="${I}"/><rect x="14" y="18" width="18" height="28" fill="${A}"/><path d="M14 24h18M14 30h18M14 36h18M14 42h18" stroke="var(--bg)" stroke-width="1.5" opacity=".6"/><path d="M32 40 C44 40 56 44 58 56" fill="none" stroke="${A}" stroke-width="2.5"/><path d="M46 14 a10 10 0 1 1 -6 18" fill="none" stroke="var(--mute)" stroke-width="2"/><path d="M40 32 l-1 -6 m1 6 5 -3" fill="none" stroke="var(--mute)" stroke-width="2"/>`
+};
+const S="var(--soft)",W="var(--water)",M="var(--mud)",B="var(--bg)",U="var(--mute)",F="var(--flame)",G="#3a9a55",RD="#e5484d",PK="#e48a9a";
+const f1=n=>+n.toFixed(1);
+const L=(x1,y1,x2,y2,c=I,w=2.5,o=1)=>`<path d="M${x1} ${y1}L${x2} ${y2}" fill="none" stroke="${c}" stroke-width="${w}" opacity="${o}"/>`;
+const Pa=(d,f="none",s=I,w=2.5,x="")=>`<path d="${d}" fill="${f}" stroke="${s}" stroke-width="${w}" ${x}/>`;
+const Ci=(x,y,r,f=S,s=I,w=2,o=1)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${f}" stroke="${s}" stroke-width="${w}" opacity="${o}"/>`;
+const Re=(x,y,w,h,f=S,s=I,rx=2,sw=2,xa="")=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${f}" stroke="${s}" stroke-width="${sw}" ${xa}/>`;
+const E=(cx,cy,rx,ry,f=S,s=I,w=2)=>`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${f}" stroke="${s}" stroke-width="${w}"/>`;
+const Ar=(x1,y1,x2,y2,c=A,w=2.5)=>{const a=Math.atan2(y2-y1,x2-x1),h=6;return `<path d="M${x1} ${y1}L${x2} ${y2}M${f1(x2-h*Math.cos(a-.5))} ${f1(y2-h*Math.sin(a-.5))}L${x2} ${y2}L${f1(x2-h*Math.cos(a+.5))} ${f1(y2-h*Math.sin(a+.5))}" fill="none" stroke="${c}" stroke-width="${w}"/>`};
+const Wv=(y,c=W,o=1)=>`<path d="M2 ${y}q7 -5 14 0t14 0t14 0t14 0t6 0" fill="none" stroke="${c}" stroke-width="3" opacity="${o}"/>`;
+const Wf=y=>`<path d="M2 ${y}q7 -5 14 0t14 0t14 0t14 0t6 0V62H2Z" fill="${W}" opacity=".85"/>`;
+const St=(x,y,r,c=F)=>`<path d="M${x} ${y-r}L${f1(x+r/3)} ${f1(y-r/3)}L${x+r} ${y}L${f1(x+r/3)} ${f1(y+r/3)}L${x} ${y+r}L${f1(x-r/3)} ${f1(y+r/3)}L${x-r} ${y}L${f1(x-r/3)} ${f1(y-r/3)}Z" fill="${c}"/>`;
+const Tx=(x,y,t,sz=16,c=A)=>`<text x="${x}" y="${y}" font-size="${sz}" font-weight="700" fill="${c}" text-anchor="middle" font-family="sans-serif">${t}</text>`;
+const rays=(cx,cy,r1,r2,a0,a1,n,c=I,w=1.5)=>{let s="";for(let i=0;i<n;i++){const a=(a0+(a1-a0)*i/(n-1))*Math.PI/180;s+=L(f1(cx+r1*Math.cos(a)),f1(cy+r1*Math.sin(a)),f1(cx+r2*Math.cos(a)),f1(cy+r2*Math.sin(a)),c,w)}return s};
+Object.assign(IC,{
+bail:Pa("M4 38H60L52 56H12Z",S)+L(12,46,52,46,W,3)+Pa("M22 18L36 14L38 28L26 32Z",A,I,2)+Ci(44,14,2.2,W,"none",0)+Ci(50,9,2,W,"none",0)+Ci(56,13,1.8,W,"none",0)+Ar(30,10,46,4,U,2),
+balk:Re(42,10,10,48,M,I)+Ci(20,16,4.5)+L(22,21,26,38)+L(24,27,34,22)+L(24,27,15,32)+L(26,38,20,56)+L(26,38,31,56)+L(58,14,58,28,A,3)+Ci(58,34,1.8,A,"none",0),
+bawl:Ci(32,32,20)+Pa("M20 25q4 -3 8 0")+Pa("M36 25q4 -3 8 0")+E(32,40,8,7,I,"none",0)+Ci(20,33,2.2,W,"none",0)+Ci(18,40,2,W,"none",0)+Ci(44,33,2.2,W,"none",0)+Ci(46,40,2,W,"none",0)+L(4,12,10,17,A)+L(60,12,54,17,A)+L(2,26,8,26,A)+L(62,26,56,26,A),
+bear:Re(12,6,40,14,M,I)+Ci(32,27,4.5)+L(24,20,29,30)+L(40,20,35,30)+L(32,31,32,46)+L(32,46,25,58)+L(32,46,39,58)+L(6,24,11,27,A)+L(58,24,53,27,A),
+belt:Re(4,26,56,12,M,I,3)+Re(24,21,16,22,"none",A,3,3)+L(32,26,32,38,A,2.5)+Ci(48,32,1.6,B,"none",0)+Ci(54,32,1.6,B,"none",0),
+blare:Pa("M12 26L32 16V48L12 38Z",A,I,2)+Re(6,25,7,14,I,I,1)+Pa("M40 24q6 8 0 16","none",A,3)+Pa("M47 18q10 14 0 28","none",A,3)+Pa("M54 12q14 20 0 40","none",A,3),
+blot:Pa("M20 30c-8 -10 6 -20 14 -12c8 -8 22 4 14 12c10 6 0 22 -10 16c-6 10 -22 4 -16 -6c-10 -2 -8 -14 -2 -10Z",I,I,1)+Ci(52,12,2.5,I,"none",0)+Ci(9,50,3,I,"none",0)+Ci(54,54,1.8,I,"none",0),
+blurt:Ci(18,34,13)+Ci(14,30,1.6,I,"none",0)+E(26,38,3,4,I,"none",0)+Pa("M34 22L58 12L54 28L62 38L44 38L38 48L38 34Z",A,I,1.5)+L(49,20,49,29,B,3)+Ci(49,34,1.7,B,"none",0),
+boot:Pa("M8 8H24V34H40Q50 34 50 44V48H8Z",M,I,2)+L(8,50,50,50,I,3)+Ci(57,22,5,B,I)+L(46,28,51,26,A,2)+L(44,20,50,20,A,2),
+breeze:Pa("M4 22H40a8 8 0 1 0 -8 -8","none",A,3)+Pa("M4 34H50a6 6 0 1 1 -6 6","none",A,3)+Pa("M10 48H32a6 6 0 1 0 -6 -6","none",U,2.5),
+bubble:Ci(20,42,9,"none",A,2.5)+Ci(40,30,6,"none",A,2.5)+Ci(28,15,4,"none",A,2)+Ci(46,48,9,"none",W,2.5)+Ci(50,13,3,"none",W,2)+Pa("M15 38q2 -3 5 -3","none",A,1.5),
+bundle:L(8,48,46,10,M,4)+L(12,52,52,14,M,4)+L(17,56,57,19,M,4)+L(7,40,40,7,M,4)+L(25,23,38,41,A,7),
+butt:Pa("M18 22Q6 30 12 44L28 40Q32 28 22 22Z",S)+Pa("M22 22a9 9 0 1 1 9 10","none",M,4.5)+Re(46,8,10,48,M,I)+L(36,22,42,26,A)+L(35,32,42,32,A)+L(36,42,42,38,A)+L(2,30,8,30,U,2)+L(4,38,9,38,U,2),
+cater:Pa("M12 42a20 20 0 0 1 40 0Z",S)+Ci(32,20,3,A,I)+L(6,44,58,44,I,3)+Pa("M20 36q2 -8 8 -12","none",B,2),
+chime:Pa("M20 44Q20 18 32 16Q44 18 44 44Z",F,I,2)+L(16,44,48,44,I,3)+Ci(32,48,3,I,"none",0)+Ci(32,13,2.5,"none",I)+Pa("M52 24q6 8 0 16","none",A,2.5)+Pa("M12 24q-6 8 0 16","none",A,2.5),
+churn:Re(16,20,32,38,M,I,5)+L(32,4,32,46,I,3)+Pa("M20 30q12 8 24 0","none",B,2)+Pa("M20 42q12 8 24 0","none",B,2)+Pa("M8 14a12 6 0 0 0 20 4","none",A,2.5)+Pa("M36 18a12 6 0 0 0 20 -4","none",A,2.5),
+clog:Re(2,24,60,16,S,I,2)+Ci(36,32,7,M,"none",0)+Ar(6,32,24,32,W,3)+L(48,26,56,38,RD,3)+L(56,26,48,38,RD,3),
+crack:Ci(32,32,24,S)+Pa("M32 8L27 20L36 28L27 38L34 48L30 56","none",I,2.5)+L(36,28,46,30,I,1.5),
+crank:Ci(22,42,11,"none",U,2)+Ci(22,42,4,I,I)+L(22,42,44,26,I,4)+L(44,26,44,12,A,6)+Pa("M8 30A16 16 0 0 1 28 18","none",U,2)+Ar(24,19,30,17,U,2),
+creep:[[10,56],[19,50],[24,41],[33,36],[37,27],[46,22],[50,13]].map((p,i)=>E(p[0],p[1],2.6,4,I,"none",0).replace("/>",` opacity="${(.25+i*.12).toFixed(2)}"/>`)).join(""),
+crouch:Ci(28,24,4.5)+Pa("M30 28Q40 33 37 44")+L(33,33,25,41)+Pa("M37 44L26 47L28 57")+Pa("M37 44L44 52L38 57")+L(8,58,58,58,U,2)+Ar(54,10,54,30,A),
+dabble:Wf(40)+Re(28,4,10,34,S,I,5)+E(33,43,10,3,"none",B,2)+E(33,46,18,5,"none",B,1.5),
+deck:Pa("M4 38H60L52 54H12Z",M,I)+L(4,38,60,38,I,3)+L(32,38,32,6,I,2.5)+Pa("M8 32L32 8L56 32","none",U,1.5)+[[13,27],[19,21],[25,15],[39,15],[45,21],[51,27]].map((p,i)=>`<path d="M${p[0]-3} ${p[1]}l6 0l-3 6Z" fill="${i%2?F:A}"/>`).join(""),
+dip:Pa("M15 36H45L42 58H18Z",M,"none",0)+Pa("M14 30H46L42 58H18Z")+Re(28,4,9,40,F,I,3)+Ar(54,8,54,26,A)+Ar(60,26,60,8,A),
+dish:E(32,46,27,7)+Pa("M17 44Q32 22 47 44Z",F,I,2)+Ar(50,30,60,20,A)+Pa("M26 18q-3 -4 0 -8","none",U,2)+Pa("M36 18q-3 -4 0 -8","none",U,2),
+dispense:Re(18,26,26,32,S,I,5)+Re(26,18,10,8,U,I,1)+Pa("M22 14H50V20","none",I,3)+Pa("M50 26q-4 6 0 9q4 -3 0 -9Z",W,"none",0)+Pa("M50 40q-3 5 0 7q3 -2 0 -7Z",W,"none",0),
+dole:Ci(32,11,7,F,I)+Ar(29,20,14,40,A)+Ar(32,20,32,40,A)+Ar(35,20,50,40,A)+E(14,52,8,3,F)+E(14,48,8,3,F)+E(32,52,8,3,F)+E(32,48,8,3,F)+E(50,52,8,3,F)+E(50,48,8,3,F),
+dote:Pa("M32 54C10 40 6 26 16 18C24 12 30 18 32 22C34 18 40 12 48 18C58 26 54 40 32 54Z",A,"none",0)+Pa("M18 24q2 -5 7 -6","none",B,2.5)+St(54,10,5)+St(10,48,4),
+drift:Wv(46)+Wv(56,W,.5)+Pa("M18 40Q32 30 46 40Z",M,I,2)+Pa("M8 18q8 -6 16 0t16 0","none",U,2)+Ar(38,18,48,18,U,2),
+drone:Pa("M20 22Q14 6 26 14Z",S)+Pa("M30 22Q32 4 40 16Z",S)+E(30,36,14,9,F)+L(26,28,26,44,I,3)+L(34,28,34,44,I,3)+Ci(46,36,5,I,"none",0)+Pa("M50 20q4 -4 8 0t6 0","none",A,2)+Pa("M52 28q4 -4 8 0","none",A,2),
+drown:Wf(20)+Ci(32,44,8,F,I)+Ci(27,31,2,"none",B,1.5)+Ci(35,26,1.6,"none",B,1.5)+Ci(30,22,1.2,"none",B,1.2)+Ar(52,28,52,52,B,2.5),
+drum:Pa("M12 30V50Q32 58 52 50V30",A,I)+E(32,30,20,6)+Pa("M12 36L20 51L28 36L36 53L44 36L52 50","none",B,1.5)+L(20,24,8,6,M,3)+L(44,24,56,6,M,3)+Ci(8,6,2.5,M,"none",0)+Ci(56,6,2.5,M,"none",0),
+duck:Ci(22,40,4.5)+Pa("M25 43Q33 40 38 48")+L(38,48,34,58)+L(38,48,45,58)+L(30,44,22,50)+Ci(46,18,5,F,I)+L(10,16,36,16,U,2)+L(16,22,37,22,U,2)+L(4,59,60,59,U,2),
+dumb:Pa("M21 32a12 12 0 1 1 22 0c-3 4 -4 7 -4 11h-14c0 -4 -1 -7 -4 -11Z",S)+Re(25,44,14,8,U,I,2)+L(28,56,36,56,I,2.5)+L(26,20,30,24,U,1.5)+L(30,20,26,24,U,1.5)+L(34,20,38,24,U,1.5)+L(38,20,34,24,U,1.5),
+dwell:Pa("M8 30L32 8L56 30","none",I,3)+Re(15,29,34,27,S,I)+Re(28,40,9,16,A,"none",1,0)+Re(19,35,7,7,B,I,1,1.5)+L(4,57,60,57,U,2),
+egg:L(2,44,30,32,M,3.5)+Pa("M30 32l-4 -1l3 4Z",I,I,1)+Ci(42,18,4.5)+L(42,23,42,40)+L(42,28,36,34)+L(42,28,49,32)+L(42,40,36,56)+L(42,40,48,56)+Ar(50,12,62,12,A)+L(32,26,35,22,A,2),
+eke:E(24,54,11,3.5,F)+E(24,49,11,3.5,F)+E(24,44,11,3.5,F)+E(24,22,11,3.5,F)+Ar(24,28,24,38,A)+L(50,26,50,40,A,3)+L(43,33,57,33,A,3),
+fan:`<path d="M32 56L6 28A36 36 0 0 1 58 28Z" fill="${F}" stroke="${I}" stroke-width="2"/>`+rays(32,56,6,38,-136,-44,7,I,1.5)+Ci(32,56,3,I,"none",0),
+fawn:E(28,40,14,8,M)+Ci(44,30,7,M,I)+Pa("M42 24l-3 -8l7 5",M,I,1.5)+Ci(47,29,1.3,I,"none",0)+L(20,46,20,57,I,3)+L(34,46,34,57,I,3)+Pa("M14 36q-8 -4 -6 -12","none",I,3)+Pa("M4 18q-2 4 0 8","none",A,2)+Pa("M10 14q-2 4 0 8","none",A,2)+Pa("M56 14c-2 -3 -6 -1 -4 2l4 4l4 -4c2 -3 -2 -5 -4 -2Z",A,"none",0),
+fend:Pa("M36 8L56 16V32Q56 48 36 58Q16 48 16 32V16Z",A,I)+Ar(2,22,14,24,I,2)+Ar(14,34,2,46,U,2)+L(36,20,36,46,B,2)+L(24,30,48,30,B,2),
+fizzle:L(10,56,30,36,U,3.5)+Ci(32,34,3,F,"none",0)+Ci(38,30,1.4,F,"none",0)+Ci(36,40,1.2,F,"none",0,.6)+Pa("M34 26q-6 -6 0 -12q6 -6 0 -12","none",U,2)+Pa("M44 30q-4 -4 0 -8","none",U,1.5),
+flip:Pa("M12 44Q8 10 32 10Q50 10 50 30","none",A,2.5)+L(50,30,45,24,A,2.5)+L(50,30,55,24,A,2.5)+`<ellipse cx="30" cy="44" rx="12" ry="5" fill="${F}" stroke="${I}" stroke-width="2" transform="rotate(-20 30 44)"/>`+Pa("M8 58q4 -6 12 -6","none",I,2.5),
+flunk:Re(14,6,36,52,S,I,2)+L(20,16,42,16,U,2)+L(20,24,38,24,U,2)+L(20,32,40,32,U,2)+L(18,22,46,52,RD,4)+L(46,22,18,52,RD,4),
+fork:Pa("M32 62V34L10 6","none",M,7)+Pa("M32 34L54 6","none",M,7)+Pa("M32 60V36","none",B,1.5,'stroke-dasharray="3 3"'),
+foul:Pa("M18 12L26 8Q32 14 38 8L46 12L56 22L48 28V56H16V28L8 22Z",S)+Pa("M28 36c-6 -2 -4 -10 2 -8c4 -6 12 -2 10 4c6 2 2 10 -4 8c-2 4 -10 2 -8 -4Z",M,"none",0)+Pa("M54 8q-3 -3 0 -6","none",U,2)+Pa("M60 10q-3 -3 0 -6","none",U,2),
+front:Pa("M14 22L24 12H54L44 22Z",S)+Pa("M44 22L54 12V42L44 52Z",S)+Re(14,22,30,30,A,I,0)+Ar(4,60,16,50,I,2),
+frown:Ci(32,32,22,S)+L(18,21,28,26,I,3)+L(46,21,36,26,I,3)+Ci(23,30,2,I,"none",0)+Ci(41,30,2,I,"none",0)+Pa("M22 46q10 -8 20 0","none",I,3)+L(30,14,30,18,I,1.5)+L(34,14,34,18,I,1.5),
+fuss:Ci(32,36,7,F,I)+L(14,18,20,24,A)+L(32,10,32,18,A)+L(50,18,44,24,A)+L(8,36,17,36,A)+L(56,36,47,36,A)+Pa("M10 54q4 -6 8 0t8 0","none",U,2)+Pa("M38 54q4 -6 8 0t8 0","none",U,2),
+gloss:Re(10,18,44,32,A,I,9)+Pa("M18 25Q28 22 38 25","none",B,3)+L(18,32,24,31,B,2.5)+St(52,10,7)+St(12,52,4),
+goof:Pa("M32 30Q22 40 14 54","none",F,6)+Pa("M32 30Q42 40 50 54","none",F,6)+Pa("M32 30Q31 44 33 58","none",F,6)+Pa("M27 33Q32 16 37 33Z",F,I,1.5)+Tx(52,20,"?",18),
+grate:Pa("M18 8H46L50 54H14Z",S)+[16,24,32,40].map(y=>L(24,y,28,y-2,I,2)+L(34,y,38,y-2,I,2)).join("")+Re(48,34,12,10,F,I,1)+L(54,48,55,56,F,2.5)+L(58,48,60,55,F,2.5)+L(50,50,50,58,F,2.5),
+hail:Ci(24,18,4.5)+L(24,23,24,42)+L(24,28,36,10)+L(24,28,18,36)+L(24,42,18,58)+L(24,42,30,58)+L(44,6,49,3,A)+L(46,13,53,13,A)+L(44,20,49,23,A),
+hammer:L(12,56,34,28,M,5)+Pa("M26 18L40 32L48 24L34 10Z",U,I)+L(48,40,48,58,I,3)+L(43,40,53,40,I,3)+L(54,34,58,30,A,2)+L(42,34,38,30,A,2),
+harp:[20,26,32,38,44].map(x=>L(x,f1(10+(x-14)*.55),x,f1(56-(x-14)*26/38),U,1.3)).join("")+Pa("M14 56L14 8Q40 6 52 30L14 56","none",M,4),
+haul:Ci(12,18,4.5)+L(14,23,22,40)+L(18,30,32,30)+L(22,40,14,57)+L(22,40,28,57)+L(32,30,42,36,U,2)+Re(42,30,18,24,M,I)+Ar(56,61,34,61,A,2),
+hem:Pa("M22 8H42L54 50H10Z",A,I)+Pa("M13 44H51","none",B,2,'stroke-dasharray="3 3"')+L(22,8,42,8,I,3),
+hike:Re(8,44,8,14,S,I)+Re(20,40,8,18,S,I)+Re(32,34,8,24,S,I)+Re(44,14,8,44,A,I)+Ar(8,36,38,12,RD,3),
+hunker:Pa("M4 32L32 14L60 32","none",I,3)+Ci(30,38,4)+Pa("M32 41Q40 45 37 52")+L(34,46,27,50)+Pa("M37 52L29 54L31 59")+L(8,60,56,60,U,2)+L(4,6,2,12,W,2)+L(14,2,12,8,W,2)+L(50,2,48,8,W,2)+L(60,4,58,10,W,2),
+jot:Re(10,10,34,46,S,I,3)+L(16,22,36,22,U,2)+L(16,30,32,30,U,2)+L(16,38,28,38,U,2)+L(34,48,56,22,F,5)+L(34,48,31,52,I,3),
+lash:L(8,56,20,44,M,5)+Pa("M20 44Q30 18 48 26Q58 30 56 12","none",I,2.5)+L(52,6,50,2,A,2)+L(58,8,62,4,A,2)+L(60,14,63,14,A,2),
+leaf:Pa("M10 54Q8 18 54 10Q50 50 10 54Z",G,I,2)+L(10,54,46,18,B,2)+L(22,42,22,32,B,1.5)+L(32,32,40,32,B,1.5),
+level:Re(4,26,56,14,F,I,3)+Re(22,29,20,8,W,I,4,1.5)+Ci(32,33,2.5,B,"none",0)+L(27,29,27,37,I,1.5)+L(37,29,37,37,I,1.5)+L(2,44,62,44,U,2),
+limber:Ci(44,12,4.5)+Pa("M42 17Q30 28 28 42","none",I,3)+Pa("M40 22Q50 12 58 10","none",I,2.5)+Pa("M36 27Q46 22 54 22","none",I,2.5)+L(28,42,22,58)+L(28,42,36,58)+Pa("M14 30q-4 -10 4 -16","none",U,2),
+lop:L(2,24,40,24,M,5)+Pa("M10 24q4 -10 10 -6",G,"none",0)+Pa("M24 24q4 -10 10 -6",G,"none",0)+L(44,12,44,36,RD,2.5,1)+L(48,30,60,44,M,5)+Ar(52,48,52,60,U,2),
+louse:Ci(32,18,5,I,"none",0)+E(32,38,10,14,I,"none",0)+L(26,32,38,32,B,1.5)+L(24,40,40,40,B,1.5)+[30,38,46].map(y=>L(22,y,12,y-6)+L(42,y,52,y-6)).join("")+L(30,14,26,6,I,2)+L(34,14,38,6,I,2),
+mete:Pa("M17 30H43L42 54H18Z",W,"none",0)+Pa("M16 14H44L42 54H18Z","none")+L(36,22,42,22,I,1.5)+L(38,30,42,30,I,1.5)+L(36,38,42,38,I,1.5)+L(38,46,42,46,I,1.5)+Pa("M44 20Q56 22 52 36L43 36","none",I,3),
+muddle:Pa("M10 32C10 10 40 10 36 28C32 46 12 40 20 26C28 12 54 16 50 34C46 52 24 52 30 40C36 28 56 40 54 52","none",M,3)+Pa("M8 50C20 58 30 44 24 36","none",A,2.5),
+mull:Ci(26,36,17)+Pa("M26 36a3 3 0 1 1 3 3a7 7 0 1 1 -7 -7a11 11 0 1 1 11 11","none",A,2.5)+Ci(48,16,2.5,U,"none",0)+Ci(55,9,3.5,U,"none",0),
+nibble:Ci(30,32,22,F,I)+Ci(52,22,6,B,"none",0)+Ci(54,33,5,B,"none",0)+Ci(51,43,4.5,B,"none",0)+Ci(22,26,2.5,M,"none",0)+Ci(30,40,2.5,M,"none",0)+Ci(36,22,2,M,"none",0)+Ci(20,42,2,M,"none",0),
+pack:Re(8,22,48,32,M,I,5)+Pa("M24 22V15H40V22","none",I,3)+Pa("M14 22Q20 12 30 22",S,I,2)+Pa("M34 22Q42 14 50 22",S,I,2)+L(20,22,20,54,B,2)+L(44,22,44,54,B,2)+Ar(32,2,32,12,A),
+patch:Re(6,10,52,44,A,I,3)+Re(22,22,20,20,F,I,2)+Re(19,19,26,26,"none",B,3,1.5,'stroke-dasharray="3 3"'),
+perk:L(16,58,48,58,M,4)+Pa("M32 57V30","none",G,3)+Pa("M32 38Q20 34 18 24Q30 24 32 38Z",G,"none",0)+Pa("M32 33Q44 27 46 17Q34 19 32 33Z",G,"none",0)+Ar(54,42,54,18,A),
+peter:Pa("M2 18Q28 22 38 31Q46 37 52 40V42Q46 41 38 41Q28 44 2 46Z",W,"none",0)+Ci(56,42,1.8,W,"none",0)+Ci(60,44,1.2,W,"none",0,.6),
+pile:Re(8,40,22,18,M,I)+Re(32,40,22,18,M,I)+Re(20,22,22,18,M,I)+Re(25,7,13,15,F,I),
+pin:L(4,58,60,58,U,2)+L(30,32,24,56,I,2.5)+Pa("M22 30L36 34L38 26L26 22Z",A,I)+Ci(36,14,10,A,I)+Pa("M31 10q3 -3 6 -2","none",B,2),
+pitch:Pa("M8 52Q28 2 50 24","none",U,2,'stroke-dasharray="3 4"')+Ci(8,52,4.5,S,I)+Ci(52,28,10,"none",A,2.5)+Ci(52,28,4,B,I),
+pluck:L(14,58,50,58,M,4)+L(32,57,32,32,G,3)+Ci(32,14,5,F,"none",0)+Ci(24,22,5,F,"none",0)+Ci(40,22,5,F,"none",0)+Ci(32,30,5,F,"none",0)+Ci(32,22,4,A,"none",0)+Ar(50,40,50,10,A),
+pore:Re(6,8,34,46,S,I)+L(12,18,32,18,U,2)+L(12,26,34,26,U,2)+L(12,34,30,34,U,2)+L(12,42,32,42,U,2)+Ci(40,36,11,B,A,3)+L(48,44,58,56,A,5),
+rack:L(10,6,10,58,I,3)+L(54,6,54,58,I,3)+L(10,24,54,24,I,3)+L(10,42,54,42,I,3)+L(10,58,54,58,I,3)+Re(14,13,8,11,A,"none",1,0)+Re(25,15,8,9,F,"none",1,0)+Re(36,12,8,12,M,"none",1,0)+Re(15,31,10,11,M,"none",1,0)+Re(30,33,8,9,A,"none",1,0)+Re(42,49,8,9,F,"none",1,0)+Ar(60,52,60,30,A,2),
+rail:Ci(16,42,11)+L(9,37,15,40,I,2.5)+L(23,37,17,40,I,2.5)+Pa("M10 49q6 -4 12 0","none",I,2.5)+Pa("M30 8L38 14L46 6L50 16L60 14L56 24L62 32L50 32L46 40L40 32L30 34L34 24Z",A,I,1.5),
+ramp:Pa("M4 56H60V18Z",S)+Ar(12,50,50,28,A,3),
+rattle:Ci(24,24,14,F,I)+Ci(20,20,3,B,"none",0)+L(33,34,50,54,A,5)+Ci(52,56,4.5,A,"none",0)+Pa("M6 10q-3 6 0 12","none",U,2)+Pa("M44 6q5 4 3 10","none",U,2),
+rig:Pa("M20 54L30 8L40 54","none",I,2.5)+L(23,42,37,42,I,1.5)+L(26,28,34,28,I,1.5)+L(24,50,35,34,I,1.5)+L(25,36,33,20,I,1.5)+Re(10,50,44,6,M,I)+L(30,8,30,2,A,2)+Wv(61),
+rip:Pa("M6 10H28L24 20L30 30L24 40L30 50L26 56H6Z",S)+Pa("M36 12H58V58H36L40 50L34 40L40 30L34 20Z",S)+Ar(14,62,4,62,A,2)+Ar(48,62,58,62,A,2),
+saddle:Pa("M6 30Q10 18 22 23Q32 30 42 23Q50 14 57 20Q62 30 50 34Q32 42 14 36Z",M,I)+Pa("M22 35L19 52H35L37 37",M,I)+L(28,52,28,56,I,2)+Re(22,56,12,5,"none",I,2,2),
+sail:Pa("M8 44H56L48 54H16Z",M,I)+L(32,44,32,6,I,2.5)+Pa("M34 8Q54 22 52 40H34Z",S,I)+Pa("M30 12Q16 24 16 40H30Z",B,I,1.5)+Wv(59),
+scoot:L(4,44,60,44,M,5)+L(10,44,10,58,M,3)+L(54,44,54,58,M,3)+Ci(24,16,4.5)+L(24,21,24,38)+L(24,38,34,38)+L(34,38,34,44)+L(24,27,32,32)+Ar(38,18,58,18,A)+L(14,30,18,30,U,2)+L(12,36,17,36,U,2),
+scrape:L(4,52,60,52,I,3)+Pa("M30 52L44 52L41 44L33 44Z",U,I)+L(37,44,52,14,M,4)+Ci(20,48,2.2,M,"none",0)+Ci(13,48,1.7,M,"none",0)+L(10,57,28,57,U,2),
+scrimp:Re(4,28,40,10,F,I)+L(30,24,30,42,RD,2,1)+L(40,18,58,40,I,3)+L(40,40,58,18,I,3)+Ci(60,42,3.5,"none",I)+Ci(60,16,3.5,"none",I)+Ar(4,52,18,52,A)+Ar(44,52,30,52,A),
+settle:Pa("M16 8H48L44 58H20Z",W,I,2,'fill-opacity=".35"')+Pa("M19 48H45L44 58H20Z",M,"none",0)+Ci(28,20,2,M,"none",0)+Ci(38,28,2,M,"none",0)+Ci(30,36,2,M,"none",0)+Ci(36,42,1.8,M,"none",0)+Ar(56,14,56,42,A,2),
+shell:Pa("M8 40Q32 60 56 40Z",S)+Pa("M8 32Q32 4 56 32Z",S)+Ci(25,38,4,F,I,1.5)+Ci(36,38,4,F,I,1.5)+Ar(44,48,62,58,A),
+shoot:Ci(42,34,18,"none",I)+Ci(42,34,11,"none",A)+Ci(42,34,4,A,"none",0)+L(6,14,40,32,I,2.5)+L(6,14,7,7,I,2)+L(6,14,0,17,I,2),
+shove:Re(36,24,22,32,M,I)+Ci(16,20,4.5)+L(18,25,28,41)+L(22,31,36,33)+L(28,41,18,57)+L(28,41,32,57)+L(2,30,9,30,A)+L(1,38,8,38,A),
+shrivel:Pa("M22 46H42L40 58H24Z",M,I)+Pa("M32 46Q32 26 44 24Q50 26 48 34","none",G,3)+Pa("M48 34q2 6 -2 8","none",G,3)+Pa("M32 34q-6 0 -8 4","none",G,2.5)+Ar(6,22,16,26,U,2)+Ar(58,12,52,18,U,2),
+shrug:Ci(32,14,6)+Pa("M16 26L22 30H42L48 26","none",I,3)+Pa("M22 30L14 40L8 36","none",I,2.5)+Pa("M42 30L50 40L56 36","none",I,2.5)+L(32,30,32,48)+L(32,48,26,60)+L(32,48,38,60)+Tx(10,20,"?",14)+Tx(54,20,"?",14),
+simmer:Re(12,28,40,22,S,I,4)+L(6,32,12,32,I,3)+L(52,32,58,32,I,3)+Pa("M32 60q-4 -4 0 -8q4 4 0 8Z",F,"none",0)+Ci(24,32,1.8,B,I,1)+Ci(34,34,1.5,B,I,1)+Pa("M24 22q-3 -4 0 -8","none",U,2)+Pa("M38 22q-3 -4 0 -8","none",U,2),
+siphon:Re(4,12,24,24,S,I)+Re(5,20,22,15,W,"none",1,0)+Re(38,38,22,20,S,I)+Re(39,48,20,9,W,"none",1,0)+Pa("M14 30V6H48V44","none",A,3)+Ar(48,32,48,42,W,2),
+skirt:Ci(32,36,10,M,I)+Pa("M4 54Q12 54 18 44Q22 18 38 18Q52 20 54 40Q56 54 60 54","none",A,3)+L(60,54,54,50,A,3)+L(60,54,55,58,A,3),
+smack:E(22,42,10,7)+L(30,37,56,14,I,3)+Pa("M16 28q-3 -4 0 -8q3 -4 0 -8","none",U,2)+Pa("M26 28q-3 -4 0 -8","none",U,2)+St(48,40,6),
+snap:L(4,42,28,32,M,5)+L(36,30,60,42,M,5)+L(32,16,32,24,A,2.5)+L(23,19,27,25,A,2.5)+L(41,19,37,25,A,2.5)+L(30,40,34,40,A,2),
+sponge:Re(12,28,40,26,F,I,7)+Ci(22,36,2.2,M,"none",0)+Ci(34,44,2.8,M,"none",0)+Ci(44,34,2,M,"none",0)+Ci(24,47,1.6,M,"none",0)+Pa("M20 6q-3 5 0 7q3 -2 0 -7Z",W,"none",0)+Pa("M44 8q-3 5 0 7q3 -2 0 -7Z",W,"none",0)+Ar(32,6,32,22,W,2),
+spout:Ci(24,40,14)+Re(18,22,12,5,S,I,2)+Pa("M37 37L48 26","none",I,4)+Pa("M48 25Q56 14 61 20","none",W,3)+Ci(59,29,2,W,"none",0)+Ci(55,35,1.6,W,"none",0)+Pa("M10 36q-8 0 -6 8q1 4 6 4","none",I,2.5),
+spruce:Pa("M20 8L32 20L44 8","none",I,2.5)+Pa("M32 20L28 26L32 54L36 26Z",A,I)+St(12,26,6)+St(52,32,5)+St(48,10,4),
+spur:Pa("M26 6H42V48H8V44Q8 36 16 36H26Z",M,I)+L(42,40,50,40,U,3)+Ci(55,40,5,"none",F,2.5)+rays(55,40,5,9,0,315,8,F,2),
+squeak:Pa("M8 48Q10 28 34 28Q50 30 54 46Z",S)+Ci(38,28,5)+Ci(46,38,1.6,I,"none",0)+Pa("M8 46q-8 4 -4 12","none",I,2)+L(56,30,61,26,A,2)+L(57,36,63,36,A,2)+L(56,42,61,46,A,2),
+stake:Pa("M2 48H62V62H2Z",M,"none",0)+L(30,10,30,54,I,4)+Pa("M30 54l-3 -6h6Z",I)+Pa("M32 12L52 18L32 24Z",A,"none",0)+Pa("M4 46H62","none",B,2,'stroke-dasharray="4 3"'),
+stave:L(10,58,40,12,M,5)+Ar(62,32,40,32,I,2.5)+Ar(38,26,52,6,U,2)+L(36,30,32,26,A,2)+L(36,36,31,38,A,2),
+stem:L(10,40,54,40,M,2.5)+L(32,8,32,40,G,4)+Pa("M32 22Q20 18 18 8Q30 10 32 22Z",G,"none",0)+Pa("M32 28Q44 24 46 14Q34 16 32 28Z",G,"none",0)+Pa("M32 40Q26 50 18 56","none",M,2.5)+Pa("M32 40V58","none",M,2.5)+Pa("M32 40Q38 50 46 56","none",M,2.5),
+stow:Re(6,6,52,22,S,I,3)+Pa("M6 28L2 38","none",I,2.5)+Re(22,38,20,16,M,I)+Pa("M28 38V34H36V38","none",I,2)+Ar(52,56,52,34,A),
+strike:Pa("M36 4L16 34H30L24 60L50 24H36L44 4Z",F,I)+L(54,8,60,4,A,2)+L(8,50,4,56,A,2),
+suck:Pa("M19 34H45L42 58H22Z",W,"none",0)+Pa("M18 24H46L42 58H22Z")+L(36,12,30,52,A,4)+L(36,12,48,6,A,4)+Ar(56,40,56,18,U,2),
+tack:Re(8,26,48,32,S,I)+L(14,40,48,40,U,2)+L(14,48,40,48,U,2)+Ci(32,26,8,A,I)+Ci(30,24,2.5,B,"none",0),
+tamper:Re(6,24,32,30,M,I,3)+Ci(22,38,5,F,I)+L(22,40,22,45,I,2)+L(34,38,48,24,U,3)+L(48,24,60,12,A,7)+Tx(54,46,"!",16,RD),
+tap:Pa("M8 24H36Q46 24 46 34V38","none",U,7)+Re(18,10,12,6,A,I)+L(24,16,24,22,I,3)+Pa("M46 44q-4 6 0 9q4 -3 0 -9Z",W,"none",0)+Ar(8,44,30,44,A,2),
+tip:Pa("M6 10H50Q56 10 56 16V36Q56 42 50 42H24L14 52V42H12Q6 42 6 36V16Q6 10 12 10Z",S)+Pa("M24 28a7 7 0 1 1 12 0c-2 2 -2 4 -2 6h-8c0 -2 0 -4 -2 -6Z",F,I,1.5)+L(28,38,32,38,I,2)+rays(30,24,10,13,-160,-20,4,A,1.5)+Pa("M44 54q6 -2 6 -8","none",U,2),
+trail:L(44,20,8,54,F,4,.9)+L(47,22,18,58,F,2.5,.6)+L(42,18,4,44,F,2,.6)+Ci(50,16,7,F,I),
+trump:Pa("M8 20Q32 10 56 20Q56 44 32 52Q8 44 8 20Z",S)+Pa("M16 28q6 -6 12 0q-6 4 -12 0Z",I,I,1)+Pa("M36 28q6 -6 12 0q-6 4 -12 0Z",I,I,1)+Pa("M24 40q8 6 16 0","none",I,2.5)+L(56,24,62,40,U,2),
+vouch:Ci(32,30,22,"none",A,4)+Ci(32,30,16,"none",A,1.5)+Pa("M22 30L30 38L44 22","none",A,4)+Pa("M22 48L18 62L26 58L30 50","none",A,2.5)+Pa("M42 48L46 62L38 58L34 50","none",A,2.5),
+wade:Ci(32,10,4.5)+L(32,15,32,32)+L(32,20,24,28)+L(32,20,40,28)+L(32,32,26,50)+L(32,32,38,50)+Wf(38)+Ar(46,24,60,24,A,2),
+whip:Pa("M8 36Q32 62 56 36Z",S)+Pa("M12 36Q16 26 22 32Q28 16 34 30Q40 22 46 32Q50 28 52 36Z",B,I,1.5)+L(44,10,56,6,A,2)+L(46,16,60,14,A,2)+L(4,14,16,10,A,2),
+whisk:L(8,56,26,38,I,4)+Pa("M26 38Q46 4 56 18Q52 38 26 38","none",U,2)+Pa("M26 38Q40 10 52 12","none",U,2)+Pa("M26 38Q50 24 58 26","none",U,2)+Pa("M44 52a14 14 0 0 0 14 -14","none",A,2.5)+Ar(58,44,58,38,A,2.5),
+wriggle:Pa("M6 42q8 -16 16 0t16 0t16 0","none",PK,7)+Ci(56,41,1.3,I,"none",0)+Pa("M10 24q-3 4 0 8","none",U,2)+Pa("M30 22q-3 4 0 8","none",U,2)
+});
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const mk=(p,b)=>esc(p).replace(new RegExp("\\b("+b+")\\b","g"),"<mark>$1</mark>");
+const rows=document.getElementById("rows"),q=document.getElementById("q"),cnt=document.getElementById("count"),az=document.getElementById("az");
+document.getElementById("total").textContent=D.length;
+document.getElementById("bases").textContent=new Set(D.map(d=>d[1])).size;
+const letters=[...new Set(D.map(d=>d[0][0].toUpperCase()))];
+az.innerHTML=letters.map(l=>`<a href="#L-${l}">${l}</a>`).join("");
+const render=()=>{
+  const t=q.value.trim().toLowerCase();
+  const list=D.filter(d=>!t||d.slice(0,5).join(" ").toLowerCase().includes(t));
+  let last="",h="";
+  for(const d of list){
+    const L=d[0][0].toUpperCase();
+    if(L!==last){h+=`<tr class="letter" id="L-${L}"><td colspan="4">${L}</td></tr>`;last=L}
+    const tag=d[5]?`<span class="tag">${d[5]}</span>`:"";
+    h+=`<tr><td class="ph" data-l="熟語の名前">${mk(d[0],d[1])}</td><td data-l="意味">${esc(d[2])}</td><td class="core" data-l="基幹の単語のコアイメージ"><b>${d[1]}</b>：${esc(d[3])}${tag}${IC[d[1]]?`<svg class="ic" viewBox="0 0 64 64" aria-hidden="true">${IC[d[1]]}</svg>`:""}</td><td class="how" data-l="覚え方">${esc(d[4])}</td></tr>`;
+  }
+  rows.innerHTML=h||`<tr><td colspan="4" class="empty">見つかりませんでした</td></tr>`;
+  cnt.textContent=t?`${list.length}件ヒット`:`全${D.length}件`;
+};
+q.addEventListener("input",render);
+render();
+}
+</script>
+</body>
+</html>

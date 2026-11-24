@@ -1,15 +1,24 @@
 "use client";
 
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { IconBolt, IconCards, IconMenu2, IconPencilQuestion, IconSnowflake } from "@tabler/icons-react";
+import { IconBolt, IconBook2, IconCards, IconMenu2, IconPencilQuestion, IconSnowflake } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
-const NAV_ITEMS = [
+type NavItem = {
+  href: string;
+  label: string;
+  caption: string;
+  Icon: typeof IconCards;
+  isStaticDocument?: boolean;
+};
+
+const NAV_ITEMS: NavItem[] = [
   { href: "/", label: "Words", caption: "単語をめくる", Icon: IconCards },
   { href: "/quiz", label: "Quiz", caption: "4択で確かめる", Icon: IconPencilQuestion },
   { href: "/flash", label: "Flash", caption: "高速でめくる", Icon: IconBolt },
+  { href: "/core", label: "Core", caption: "熟語のコアイメージ", Icon: IconBook2, isStaticDocument: true },
 ];
 
 function Wordmark() {
@@ -29,8 +38,30 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
 
   return (
     <nav className="flex flex-col gap-y-1.5">
-      {NAV_ITEMS.map(({ href, label, caption, Icon }) => {
+      {NAV_ITEMS.map(({ href, label, caption, Icon, isStaticDocument }) => {
         const isActive = pathname === href;
+        const className = `flex items-center gap-x-3 rounded-xl border px-3 py-2.5 transition-colors ${
+          isActive
+            ? "border-gold-400/50 bg-gold-500/12 text-gold-100"
+            : "border-transparent text-frost-300 hover:border-ice-200/30 hover:bg-frost-100/5 hover:text-frost-100"
+        }`;
+        const content = (
+          <>
+            <Icon size={18} stroke={1.6} />
+            <span className="leading-tight">
+              <span className="block font-display text-sm tracking-[0.18em]">{label}</span>
+              <span className="block text-[10px] text-frost-400">{caption}</span>
+            </span>
+          </>
+        );
+
+        if (isStaticDocument) {
+          return (
+            <a key={href} href={href} onClick={onNavigate} className={className}>
+              {content}
+            </a>
+          );
+        }
 
         return (
           <Link
@@ -38,17 +69,9 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
             href={href}
             onClick={onNavigate}
             aria-current={isActive ? "page" : undefined}
-            className={`flex items-center gap-x-3 rounded-xl border px-3 py-2.5 transition-colors ${
-              isActive
-                ? "border-gold-400/50 bg-gold-500/12 text-gold-100"
-                : "border-transparent text-frost-300 hover:border-ice-200/30 hover:bg-frost-100/5 hover:text-frost-100"
-            }`}
+            className={className}
           >
-            <Icon size={18} stroke={1.6} />
-            <span className="leading-tight">
-              <span className="block font-display text-sm tracking-[0.18em]">{label}</span>
-              <span className="block text-[10px] text-frost-400">{caption}</span>
-            </span>
+            {content}
           </Link>
         );
       })}

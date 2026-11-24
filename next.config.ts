@@ -12,6 +12,9 @@ const nextConfig = {
   turbopack: {
     root: __dirname,
   },
+  async rewrites() {
+    return [{ source: "/core", destination: "/core.html" }];
+  },
 };
 
 // next-pwa is a webpack plugin, so it is only applied to production builds
