@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- 背景 -->
+  <rect x="16" y="16" width="480" height="480" rx="108" fill="#2F7FD8"/>
+
+  <!-- 氷のキューブ（中央に配置） -->
+  <g transform="translate(256 256) scale(1.3) translate(-266 -264)">
+    <!-- 上面 -->
+    <polygon points="140,190 340,190 392,138 192,138" fill="#E6F7FF"/>
+    <!-- 右側面 -->
+    <polygon points="340,190 392,138 392,338 340,390" fill="#8ED3F5"/>
+    <!-- 正面 -->
+    <polygon points="140,190 340,190 340,390 140,390" fill="#BDE8FC"/>
+
+    <!-- 正面のハイライト -->
+    <path d="M162 212 L162 262" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round"/>
+    <path d="M162 284 L162 296" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round"/>
+
+    <!-- 閉じ込められた文字 A -->
+    <g transform="translate(240 291) scale(0.9) translate(-240 -291)" stroke="#1E5BA8" stroke-width="28" stroke-linecap="round" stroke-linejoin="round" fill="none">
+      <path d="M190 356 L240 226 L290 356"/>
+      <path d="M211 310 L269 310"/>
+    </g>
+  </g>
+</svg>
